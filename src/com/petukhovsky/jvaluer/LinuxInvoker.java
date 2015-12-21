@@ -10,11 +10,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * Created by Arthur on 12/18/2015.
+ * Created by qjex on 12/21/15.
  */
+
 public class LinuxInvoker implements Invoker {
 
-    private static Path runexe = Local.getWindowsRunExe();
+    private static Path runexe = Local.getLinuxRunExe();
     private static DocumentBuilderFactory factory;
     private static DocumentBuilder builder;
 
