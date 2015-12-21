@@ -7,21 +7,18 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 
 /**
  * Created by Arthur on 12/18/2015.
  */
 public class WindowsInvoker implements Invoker {
 
-    private static Path runexe = null;
+    private static Path runexe = Local.getWindowsRunExe();
     private static DocumentBuilderFactory factory;
     private static DocumentBuilder builder;
 
     static {
-        checkRunExe();
         factory = DocumentBuilderFactory.newInstance();
         try {
             builder = factory.newDocumentBuilder();
@@ -65,16 +62,5 @@ public class WindowsInvoker implements Invoker {
         }
 
         return info;
-    }
-
-    private static void checkRunExe() {
-        if (runexe == null || !Files.exists(runexe))
-            try {
-                runexe = Files.createTempFile("", ".exe");
-                runexe.toFile().deleteOnExit();
-                Files.copy(WindowsInvoker.class.getResourceAsStream("/runexe.exe"), runexe, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
     }
 }

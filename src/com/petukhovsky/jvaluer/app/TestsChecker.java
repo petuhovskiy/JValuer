@@ -27,7 +27,7 @@ public class TestsChecker {
         if (!time.isEmpty()) options.append("time_limit", time);
         if (!memory.isEmpty()) options.append("memory_limit", memory);
 
-        Runner runner = new Runner("input.txt", "output.txt", new WindowsInvoker(), options);
+        Runner runner = new Runner("input.txt", "output.txt", options);
         Grader grader = new Grader(runner, new Estimator(new TokenChecker()));
         grader.provideExecutable(Paths.get(exe));
 

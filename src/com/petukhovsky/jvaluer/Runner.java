@@ -20,14 +20,14 @@ public class Runner {
     Invoker invoker;
     RunOptions options;
 
-    Runner(Path folder, String in, String out, Invoker invoker, RunOptions options) {
+    Runner(Path folder, String in, String out, RunOptions options) {
         this.folder = folder;
         this.folder.toFile().setExecutable(true, false);
         this.folder.toFile().setReadable(true, false);
         this.folder.toFile().setWritable(true, false);
         this.in = folder.resolve(in);
         this.out = folder.resolve(out);
-        this.invoker = invoker;
+        this.invoker = Local.getInvoker();
         this.executable = folder.resolve("solution.exe");
         this.options = options
                             .append("executable", executable.toString())
@@ -36,8 +36,8 @@ public class Runner {
         if (out.equals("stdout")) options.append("stdout", folder.resolve("stdout").toString());
     }
 
-    public Runner(String in, String out, Invoker invoker, RunOptions options) throws IOException {
-        this(Files.createTempDirectory(""), in, out, invoker, options);
+    public Runner(String in, String out, RunOptions options) throws IOException {
+        this(Files.createTempDirectory(""), in, out, options);
         this.folder.toFile().deleteOnExit();
     }
 
