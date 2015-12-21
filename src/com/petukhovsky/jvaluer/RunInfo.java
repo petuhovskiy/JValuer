@@ -20,6 +20,7 @@ public class RunInfo {
     public void completed(RunVerdict runVerdict, int exitCode, int userTime, int kernelTime, int passedTime, int consumedMemory, String comment) {
         this.runVerdict = runVerdict;
         this.exitCode = exitCode;
+        if (exitCode != 0 && this.runVerdict == RunVerdict.SUCCESS) this.runVerdict = RunVerdict.RUNTIME_ERROR;
         this.userTime = userTime;
         this.kernelTime = kernelTime;
         this.passedTime = passedTime;
