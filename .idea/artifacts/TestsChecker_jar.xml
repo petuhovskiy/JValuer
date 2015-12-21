@@ -2,7 +2,7 @@
   <artifact type="jar" build-on-make="true" name="TestsChecker:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/TestsChecker_jar</output-path>
     <root id="archive" name="MyCheck.jar">
-      <element id="module-output" name="MyCheck" />
+      <element id="module-output" name="JValuer" />
     </root>
   </artifact>
 </component>
