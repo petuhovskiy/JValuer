@@ -33,15 +33,24 @@ public class Local {
                 linuxRunExe = Files.createTempFile("", "");
                 linuxRunExe.toFile().deleteOnExit();
                 Files.copy(Local.class.getResourceAsStream("/runexe"), linuxRunExe, StandardCopyOption.REPLACE_EXISTING);
+                linuxRunExe.toFile().setExecutable(true, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         return linuxRunExe;
     }
 
+    public static boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase().contains("win");
+    }
+
+    public static boolean isUnix() {
+        return !isWindows();
+    }
+
     public static Invoker getInvoker() {
         if (invoker == null) {
-            if (System.getProperty("os.name").toLowerCase().contains("win"))
+            if (isWindows())
                 invoker = new WindowsInvoker();
             else invoker = new LinuxInvoker();
         }

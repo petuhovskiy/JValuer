@@ -47,7 +47,7 @@ public class LinuxInvoker implements Invoker {
 
             if (Local.isDebug()) System.out.println("LinuxInvoker runs runexe with cmd: " + cmd);
 
-            Process process = Runtime.getRuntime().exec(cmd);
+            Process process = Runtime.getRuntime().exec(new String[]{"bash", "-c", cmd});
             process.waitFor();
 
             Document doc = builder.parse(process.getInputStream());

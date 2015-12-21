@@ -39,4 +39,8 @@ public class TestVerdict {
         if (mb < 2D) return String.format("%.2fkb", kb);
         return String.format("%.2fMB", mb);
     }
+
+    public String getRunComment() {
+        return info.getComment();
+    }
 }

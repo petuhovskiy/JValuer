@@ -10,7 +10,8 @@ public enum RunVerdict {
     TIME_LIMIT_EXCEEDED("Time limit exceeded"),
     MEMORY_LIMIT_EXCEEDED("Memory limit exceeded"),
     IDLENESS_LIMIT_EXCEEDED("Idleness limit exceeded"),
-    SECURITY_VIOLATION("Security violation");
+    SECURITY_VIOLATION("Security violation"),
+    FAIL("Fail");
 
     private String text;
     RunVerdict(String text) {
