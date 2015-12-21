@@ -1,9 +1,5 @@
 package com.petukhovsky.jvaluer;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -23,26 +19,16 @@ public class Grader {
         runner.provideExecutable(exe);
     }
 
-    public TestVerdict test(InputStream in, InputStream answer) {
-        RunInfo info = runner.run(in);
-        return estimator.estimate(in, answer, runner.getOutputStream(), info);
-    }
-
     public TestVerdict test(String in, String answer) {
-        RunInfo info = runner.run(in);
-        return estimator.estimate(new ByteArrayInputStream(in.getBytes()), new ByteArrayInputStream(answer.getBytes()), runner.getOutputStream(), info);
+        return test(new StringData(in), new StringData(answer));
     }
 
     public TestVerdict test(Path in, Path answer) {
+        return test(new PathData(in), new PathData(answer));
+    }
+
+    public TestVerdict test(TestData in, TestData answer) {
         RunInfo info = runner.run(in);
-        InputStream inStream, answerStream;
-        inStream = answerStream = null;
-        try {
-            inStream = Files.newInputStream(in);
-            answerStream = Files.newInputStream(answer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return estimator.estimate(inStream, answerStream, runner.getOutputStream(), info);
+        return estimator.estimate(in, answer, runner.getOutput(), info);
     }
 }

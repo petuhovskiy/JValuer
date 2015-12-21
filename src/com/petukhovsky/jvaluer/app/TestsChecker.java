@@ -13,21 +13,108 @@ import java.util.Scanner;
  */
 public class TestsChecker {
     public static void main(String[] args) throws IOException {
+        String inFile = "input.txt";
+        String outFile = "output.txt";
+        String exe = null;
+        String folder = null;
+        String time = null;
+        String memory = null;
+        boolean silent = false;
+        boolean files = false;
+        for (int i = 0; i < args.length; i++) {
+            String key = args[i];
+            switch (key) {
+                case "-silent":
+                    silent = true;
+                    break;
+                case "-in":
+                    if (++i == args.length) {
+                        System.err.println("In file isn't specified");
+                        return;
+                    }
+                    inFile = args[i];
+                    break;
+                case "-out":
+                    if (++i == args.length) {
+                        System.err.println("Out file isn't specified");
+                        return;
+                    }
+                    outFile = args[i];
+                    break;
+                case "-exe":
+                    if (++i == args.length) {
+                        System.err.println("Exe file isn't specified");
+                        return;
+                    }
+                    exe = args[i];
+                    break;
+                case "-folder":
+                    if (++i == args.length) {
+                        System.err.println("Folder isn't specified");
+                        return;
+                    }
+                    folder = args[i];
+                    break;
+                case "-time":
+                    if (++i == args.length) {
+                        System.err.println("Time isn't specified");
+                        return;
+                    }
+                    time = args[i];
+                    break;
+                case "-memory":
+                    if (++i == args.length) {
+                        System.err.println("Memory isn't specified");
+                        return;
+                    }
+                    memory = args[i];
+                    break;
+                case "-files":
+                    files = true;
+                    break;
+                case "-debug":
+                    Local.setDebug(true);
+                    break;
+                default:
+                    System.err.println("Unknown parameter " + key);
+                    return;
+            }
+        }
+
         Scanner sc = new Scanner(System.in);
-        System.out.print("Executable filename: ");
-        String exe = sc.nextLine().trim();
-        System.out.print("Folder with tests: ");
-        String folder = sc.nextLine().trim();
-        System.out.print("Time limit: ");
-        String time = sc.nextLine().trim();
-        System.out.print("Memory limit: ");
-        String memory = sc.nextLine().trim();
+
+        if (exe == null) {
+            System.out.print("Executable filename: ");
+            exe = sc.nextLine().trim();
+        }
+        if (folder == null) {
+            System.out.print("Folder with tests: ");
+            folder = sc.nextLine().trim();
+        }
+
+        if (!silent) {
+            if (time == null) {
+                System.out.print("Time limit: ");
+                time = sc.nextLine().trim();
+            }
+            if (memory == null) {
+                System.out.print("Memory limit: ");
+                memory = sc.nextLine().trim();
+            }
+        }
+
+        if (files) {
+            System.out.print("Input: ");
+            inFile = sc.nextLine().trim();
+            System.out.print("Output: ");
+            outFile = sc.nextLine().trim();
+        }
 
         RunOptions options = new RunOptions("trusted", "");
-        if (!time.isEmpty()) options.append("time_limit", time);
-        if (!memory.isEmpty()) options.append("memory_limit", memory);
+        if (time != null && !time.isEmpty()) options.append("time_limit", time);
+        if (memory != null && !memory.isEmpty()) options.append("memory_limit", memory);
 
-        Runner runner = new Runner("input.txt", "output.txt", options);
+        Runner runner = new Runner(inFile, outFile, options);
         Grader grader = new Grader(runner, new Estimator(new TokenChecker()));
         grader.provideExecutable(Paths.get(exe));
 

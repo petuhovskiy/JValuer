@@ -1,6 +1,11 @@
 package com.petukhovsky.util;
 
-import java.io.*;
+import com.petukhovsky.jvaluer.TestData;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * Created by Arthur on 12/19/2015.
@@ -14,6 +19,14 @@ public class AtomScanner {
     int len = 0;
     int it = 0;
     boolean end = false;
+
+    public AtomScanner(TestData testData) {
+        this(testData.openInputStream());
+    }
+
+    public AtomScanner(InputStream is) {
+        br = new BufferedReader(new InputStreamReader(is), BUFFER_SIZE);
+    }
 
     boolean delim(char c) {
         return c == ' ' || c == '\n' || c == '\r';
@@ -77,6 +90,7 @@ public class AtomScanner {
         }
         return result;
     }
+
     long nextLong() {
         moveNext();
         long result = 0;
@@ -90,18 +104,6 @@ public class AtomScanner {
             if (delim(buf[it])) break;
         }
         return result;
-    }
-
-    AtomScanner(String file) {
-        try {
-            br = new BufferedReader(new FileReader(file), BUFFER_SIZE);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public AtomScanner(InputStream is) {
-        br = new BufferedReader(new InputStreamReader(is), BUFFER_SIZE);
     }
 
     public void close() {

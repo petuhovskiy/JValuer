@@ -45,6 +45,8 @@ public class LinuxInvoker implements Invoker {
             if (options.hasParameter("time_limit")) cmd += " -t " + options.getParameter("time_limit");
             cmd += " \"" + options.getParameter("executable") + "\"";
 
+            if (Local.isDebug()) System.out.println("LinuxInvoker runs runexe with cmd: " + cmd);
+
             Process process = Runtime.getRuntime().exec(cmd);
             process.waitFor();
 

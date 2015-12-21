@@ -44,6 +44,8 @@ public class WindowsInvoker implements Invoker {
             if (options.hasParameter("time_limit")) cmd += " -t " + options.getParameter("time_limit");
             cmd += " \"" + options.getParameter("executable") + "\"";
 
+            if (Local.isDebug()) System.out.println("WindowsInvoker runs runexe with cmd: " + cmd);
+
             Process process = Runtime.getRuntime().exec(cmd);
             process.waitFor();
 

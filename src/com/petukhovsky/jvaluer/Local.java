@@ -13,6 +13,7 @@ public class Local {
     private static Path windowsRunExe = null;
     private static Path linuxRunExe = null;
     private static Invoker invoker = null;
+    private static boolean debug = false;
 
     public static Path getWindowsRunExe() {
         if (windowsRunExe == null || !Files.exists(windowsRunExe))
@@ -45,5 +46,13 @@ public class Local {
             else invoker = new LinuxInvoker();
         }
         return invoker;
+    }
+
+    public static boolean isDebug() {
+        return debug;
+    }
+
+    public static void setDebug(boolean debug) {
+        Local.debug = debug;
     }
 }

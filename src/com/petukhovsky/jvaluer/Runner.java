@@ -2,10 +2,7 @@ package com.petukhovsky.jvaluer;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Set;
@@ -88,50 +85,21 @@ public class Runner {
         return invoker.run(options);
     }
 
-    public RunInfo run(Path input) {
-        try {
-            clear(folder, executable.getFileName().toString());
-            Files.copy(input, in);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return run();
-    }
-
-    public RunInfo run(String testData) {
-        try {
-            clear(folder, executable.getFileName().toString());
-            Files.write(in, testData.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return run();
+    public RunInfo run(TestData testData) {
+        return run(testData.openInputStream());
     }
 
     public RunInfo run(InputStream test) {
         try {
             clear(folder, executable.getFileName().toString());
-            Files.copy(test, in);
+            Files.copy(test, in, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return run();
     }
 
-    public Path getOutput() {
-        return out;
-    }
-
-    public InputStream getOutputStream() {
-        try {
-            return Files.newInputStream(out);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public String getOutputText() throws IOException {
-        return String.join("\n", Files.readAllLines(out));
+    public TestData getOutput() {
+        return new PathData(out);
     }
 }
