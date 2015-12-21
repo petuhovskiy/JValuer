@@ -11,6 +11,7 @@ import java.nio.file.StandardCopyOption;
 public class Local {
 
     private static Path windowsRunExe = null;
+    private static Path linuxRunExe = null;
     private static Invoker invoker = null;
 
     public static Path getWindowsRunExe() {
@@ -18,17 +19,30 @@ public class Local {
             try {
                 windowsRunExe = Files.createTempFile("", ".exe");
                 windowsRunExe.toFile().deleteOnExit();
-                Files.copy(WindowsInvoker.class.getResourceAsStream("/runexe.exe"), windowsRunExe, StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(Local.class.getResourceAsStream("/runexe.exe"), windowsRunExe, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         return windowsRunExe;
     }
 
+    public static Path getLinuxRunExe(){
+        if (linuxRunExe == null || !Files.exists(linuxRunExe))
+            try {
+                linuxRunExe = Files.createTempFile("", "");
+                linuxRunExe.toFile().deleteOnExit();
+                Files.copy(Local.class.getResourceAsStream("/runexe"), linuxRunExe, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        return linuxRunExe;
+    }
+
     public static Invoker getInvoker() {
         if (invoker == null) {
-            //TODO return invoker based on OS
-            invoker = new WindowsInvoker();
+            if (System.getProperty("os.name").toLowerCase().contains("win"))
+                invoker = new WindowsInvoker();
+            else invoker = new LinuxInvoker();
         }
         return invoker;
     }
