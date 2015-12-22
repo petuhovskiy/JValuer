@@ -12,6 +12,8 @@ public class Local {
 
     private static Path windowsRunExe = null;
     private static Path linuxRunExe = null;
+    private static Path OSXRunExe = null;
+
     private static Invoker invoker = null;
     private static boolean debug = false;
 
@@ -32,7 +34,7 @@ public class Local {
             try {
                 linuxRunExe = Files.createTempFile("", "");
                 linuxRunExe.toFile().deleteOnExit();
-                Files.copy(Local.class.getResourceAsStream("/runexe"), linuxRunExe, StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(Local.class.getResourceAsStream("/runexe_linux"), linuxRunExe, StandardCopyOption.REPLACE_EXISTING);
                 linuxRunExe.toFile().setExecutable(true, false);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -40,19 +42,39 @@ public class Local {
         return linuxRunExe;
     }
 
+    public static Path getOSXRunExe() {
+        if (OSXRunExe == null || !Files.exists(OSXRunExe))
+            try {
+                OSXRunExe = Files.createTempFile("", "");
+                OSXRunExe.toFile().deleteOnExit();
+                Files.copy(Local.class.getResourceAsStream("/runexe_osx"), OSXRunExe, StandardCopyOption.REPLACE_EXISTING);
+                OSXRunExe.toFile().setExecutable(true, false);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        return OSXRunExe;
+    }
+
     public static boolean isWindows() {
         return System.getProperty("os.name").toLowerCase().contains("win");
     }
 
     public static boolean isUnix() {
-        return !isWindows();
+        return !isOSX() && !isWindows();
+    }
+
+    public static boolean isOSX() {
+        return System.getProperty("os.name").contains("OS X");
     }
 
     public static Invoker getInvoker() {
         if (invoker == null) {
             if (isWindows())
                 invoker = new WindowsInvoker();
-            else invoker = new LinuxInvoker();
+            if (isOSX())
+                invoker = new OSXInvoker();
+            if (isUnix())
+                invoker = new LinuxInvoker();
         }
         return invoker;
     }
