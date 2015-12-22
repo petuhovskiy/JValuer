@@ -1,6 +1,6 @@
 JValuer
 =======
-Java lib for running and checking solutions
+Java lib for running and checking solutions. Requires Java 8.
 
 JChecker
 --------
