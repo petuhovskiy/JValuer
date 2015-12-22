@@ -13,8 +13,8 @@ import java.util.Scanner;
  */
 public class TestsChecker {
     public static void main(String[] args) throws IOException {
-        String inFile = "input.txt";
-        String outFile = "output.txt";
+        String inFile = "stdin";
+        String outFile = "stdout";
         String exe = null;
         String folder = null;
         String time = null;
