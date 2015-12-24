@@ -36,6 +36,7 @@ public class Runner {
     public Runner(String in, String out, RunOptions options) throws IOException {
         this(Files.createTempDirectory(""), in, out, options);
         this.folder.toFile().deleteOnExit();
+        this.executable.toFile().deleteOnExit();
     }
 
     private void clear(Path path, String... values) throws IOException {

@@ -10,12 +10,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * Created by qjex on 12/21/15.
+ * Created by Arthur on 12/18/2015.
  */
+public class DefaultInvoker implements Invoker {
 
-public class LinuxInvoker implements Invoker {
-
-    private static Path runexe = Local.getLinuxRunExe();
+    private static Path runexe = Local.getRunExe();
     private static DocumentBuilderFactory factory;
     private static DocumentBuilder builder;
 
@@ -38,15 +37,16 @@ public class LinuxInvoker implements Invoker {
             if (options.hasParameter("folder")) cmd += " -d \"" + options.getParameter("folder") + "\"";
             if (options.hasParameter("stdin")) cmd += " -i \"" + options.getParameter("stdin") + "\"";
             if (options.hasParameter("stdout")) cmd += " -o \"" + options.getParameter("stdout") + "\"";
+            if (Local.isWindows() && options.hasParameter("trusted")) cmd += " -z";
             if (options.hasParameter("login")) cmd += " -l " + options.getParameter("login");
             if (options.hasParameter("password")) cmd += " -p " + options.getParameter("password");
             if (options.hasParameter("memory_limit")) cmd += " -m " + options.getParameter("memory_limit");
             if (options.hasParameter("time_limit")) cmd += " -t " + options.getParameter("time_limit");
             cmd += " \"" + options.getParameter("executable") + "\"";
 
-            if (Local.isDebug()) System.out.println("LinuxInvoker runs runexe with cmd: " + cmd);
+            if (Local.isDebug()) System.out.println("Invoker runs runexe with cmd: " + cmd);
 
-            Process process = Runtime.getRuntime().exec(new String[]{"bash", "-c", cmd});
+            Process process = Local.execute(cmd);
             process.waitFor();
 
             Document doc = builder.parse(process.getInputStream());

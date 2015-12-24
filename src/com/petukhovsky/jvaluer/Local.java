@@ -10,49 +10,31 @@ import java.nio.file.StandardCopyOption;
  */
 public class Local {
 
-    private static Path windowsRunExe = null;
-    private static Path linuxRunExe = null;
-    private static Path OSXRunExe = null;
+    private static Path runexe = null;
 
     private static Invoker invoker = null;
     private static boolean debug = false;
 
-    public static Path getWindowsRunExe() {
-        if (windowsRunExe == null || !Files.exists(windowsRunExe))
-            try {
-                windowsRunExe = Files.createTempFile("", ".exe");
-                windowsRunExe.toFile().deleteOnExit();
-                Files.copy(Local.class.getResourceAsStream("/runexe.exe"), windowsRunExe, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        return windowsRunExe;
+    public static Path loadResource(String name) {
+        try {
+            Path path = Files.createTempFile("", name.startsWith("/") ? name.substring(1) : name);
+            path.toFile().deleteOnExit();
+            Files.copy(Local.class.getResourceAsStream(name), path, StandardCopyOption.REPLACE_EXISTING);
+            return path;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public static Path getLinuxRunExe(){
-        if (linuxRunExe == null || !Files.exists(linuxRunExe))
-            try {
-                linuxRunExe = Files.createTempFile("", "");
-                linuxRunExe.toFile().deleteOnExit();
-                Files.copy(Local.class.getResourceAsStream("/runexe_linux"), linuxRunExe, StandardCopyOption.REPLACE_EXISTING);
-                linuxRunExe.toFile().setExecutable(true, false);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        return linuxRunExe;
-    }
-
-    public static Path getOSXRunExe() {
-        if (OSXRunExe == null || !Files.exists(OSXRunExe))
-            try {
-                OSXRunExe = Files.createTempFile("", "");
-                OSXRunExe.toFile().deleteOnExit();
-                Files.copy(Local.class.getResourceAsStream("/runexe_osx"), OSXRunExe, StandardCopyOption.REPLACE_EXISTING);
-                OSXRunExe.toFile().setExecutable(true, false);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        return OSXRunExe;
+    public static Path getRunExe() {
+        if (runexe == null) {
+            if (isWindows()) runexe = loadResource("/runexe.exe");
+            if (isOSX()) runexe = loadResource("/runexe_osx");
+            if (isUnix()) runexe = loadResource("/runexe_linux");
+            runexe.toFile().setExecutable(true);
+        }
+        return runexe;
     }
 
     public static boolean isWindows() {
@@ -69,14 +51,14 @@ public class Local {
 
     public static Invoker getInvoker() {
         if (invoker == null) {
-            if (isWindows())
-                invoker = new WindowsInvoker();
-            if (isOSX())
-                invoker = new OSXInvoker();
-            if (isUnix())
-                invoker = new LinuxInvoker();
+            invoker = new DefaultInvoker();
         }
         return invoker;
+    }
+
+    public static Process execute(String cmd) throws IOException {
+        if (isWindows()) return Runtime.getRuntime().exec(cmd);
+        else return Runtime.getRuntime().exec(new String[]{"bash", "-c", cmd});
     }
 
     public static boolean isDebug() {
