@@ -148,6 +148,6 @@ public class TestsChecker {
     }
 
     private static void printResult(String name, TestVerdict test) {
-        System.out.println("Test " + name + " (" + test.getTime() + ", " + test.getMemory() + ") - " + test.getVerdict() + ". " + test.getComment());
+        System.out.println("Test " + name + " " + test);
     }
 }

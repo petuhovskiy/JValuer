@@ -34,7 +34,9 @@ public class StringData extends TestData {
         try {
             path = Files.createTempFile("", "");
             path.toFile().deleteOnExit();
-            Files.copy(openInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            try (InputStream is = openInputStream()) {
+                Files.copy(is, path, StandardCopyOption.REPLACE_EXISTING);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

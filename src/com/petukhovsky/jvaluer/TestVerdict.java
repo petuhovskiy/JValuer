@@ -16,7 +16,7 @@ public class TestVerdict {
     }
 
     public boolean isAccepted() {
-        return info.getRunVerdict() == RunVerdict.SUCCESS && check.isCorrect;
+        return info.getRunVerdict() == RunVerdict.SUCCESS && check.isCorrect();
     }
 
     public String getVerdict() {
@@ -24,7 +24,7 @@ public class TestVerdict {
     }
 
     public String getComment() {
-        return check != null ? check.comment : "";
+        return check != null ? check.getComment() : "";
     }
 
     public String getTime() {
@@ -42,5 +42,10 @@ public class TestVerdict {
 
     public String getRunComment() {
         return info.getComment();
+    }
+
+    @Override
+    public String toString() {
+        return "(" + getTime() + ", " + getMemory() + ") - " + verdict + ". " + getComment();
     }
 }

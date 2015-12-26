@@ -31,4 +31,8 @@ public class Grader {
         RunInfo info = runner.run(in);
         return estimator.estimate(in, answer, runner.getOutput(), info);
     }
+
+    public TestData getOutput() {
+        return runner.getOutput();
+    }
 }

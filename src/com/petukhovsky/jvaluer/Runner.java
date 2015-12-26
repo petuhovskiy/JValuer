@@ -25,12 +25,13 @@ public class Runner {
         this.in = folder.resolve(in);
         this.out = folder.resolve(out);
         this.invoker = Local.getInvoker();
-        this.executable = folder.resolve("solution.exe");
+        this.executable = folder.resolve("solution" + Local.getExecutableSuffix());
         this.options = options
                             .append("executable", executable.toString())
                             .append("folder", folder.toString());
         if (in.equals("stdin")) this.options = this.options.append("stdin", this.in.toString());
         if (out.equals("stdout")) this.options = this.options.append("stdout", this.out.toString());
+        if (out.equals("stderr")) this.options = this.options.append("stderr", this.out.toString());
     }
 
     public Runner(String in, String out, RunOptions options) throws IOException {
@@ -94,6 +95,7 @@ public class Runner {
         try {
             clear(folder, executable.getFileName().toString());
             Files.copy(test, in, StandardCopyOption.REPLACE_EXISTING);
+            test.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

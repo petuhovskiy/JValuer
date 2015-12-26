@@ -13,7 +13,7 @@ public class RunInfo {
     private String comment;
 
     public void crashed(String comment) {
-        runVerdict = RunVerdict.CRASHED;
+        runVerdict = RunVerdict.CRASH;
         this.comment = comment;
     }
 

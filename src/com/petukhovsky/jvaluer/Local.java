@@ -1,6 +1,7 @@
 package com.petukhovsky.jvaluer;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -19,7 +20,9 @@ public class Local {
         try {
             Path path = Files.createTempFile("", name.startsWith("/") ? name.substring(1) : name);
             path.toFile().deleteOnExit();
-            Files.copy(Local.class.getResourceAsStream(name), path, StandardCopyOption.REPLACE_EXISTING);
+            try (InputStream is = Local.class.getResourceAsStream(name)) {
+                Files.copy(is, path, StandardCopyOption.REPLACE_EXISTING);
+            }
             return path;
         } catch (IOException e) {
             e.printStackTrace();
@@ -61,9 +64,7 @@ public class Local {
         else return Runtime.getRuntime().exec(new String[]{"bash", "-c", cmd});
     }
 
-    //TODO
-    /*
-        public static Process execute(String... cmd) throws IOException {
+    public static Process execute(String[] cmd) throws IOException {
         if (isWindows()) return Runtime.getRuntime().exec(cmd);
         else {
             String[] args = new String[cmd.length + 2];
@@ -73,7 +74,6 @@ public class Local {
             return Runtime.getRuntime().exec(args);
         }
     }
-     */
 
     public static boolean isDebug() {
         return debug;

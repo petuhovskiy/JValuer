@@ -17,6 +17,6 @@ public class Estimator {
         if (!out.exists())
             return new TestVerdict(null, info, "Presentation Error");
         CheckResult result = checker.check(in, answer, out);
-        return new TestVerdict(result, info, result.isCorrect ? "Accepted" : "Wrong answer");
+        return new TestVerdict(result, info, result.isCorrect() ? "Accepted" : "Wrong answer");
     }
 }

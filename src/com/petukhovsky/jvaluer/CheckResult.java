@@ -4,9 +4,9 @@ package com.petukhovsky.jvaluer;
  * Created by Arthur on 12/19/2015.
  */
 public class CheckResult {
-    boolean isCorrect;
-    double result;
-    String comment;
+    private boolean isCorrect;
+    private double result;
+    private String comment;
 
     public CheckResult(boolean isCorrect, String comment) {
         this.isCorrect = isCorrect;
@@ -18,5 +18,17 @@ public class CheckResult {
         this.result = result;
         this.comment = comment;
         this.isCorrect = result != 0D;
+    }
+
+    public boolean isCorrect() {
+        return isCorrect;
+    }
+
+    public double getResult() {
+        return result;
+    }
+
+    public String getComment() {
+        return comment;
     }
 }
