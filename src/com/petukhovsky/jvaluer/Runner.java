@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
  */
 public class Runner {
 
-    Path folder, executable, in, out;
-    Invoker invoker;
-    RunOptions options;
+    private Path folder, executable, in, out;
+    private Invoker invoker;
+    private RunOptions options;
 
     Runner(Path folder, String in, String out, RunOptions options) {
         this.folder = folder;
@@ -29,8 +29,8 @@ public class Runner {
         this.options = options
                             .append("executable", executable.toString())
                             .append("folder", folder.toString());
-        if (in.equals("stdin")) options.append("stdin", folder.resolve("stdin").toString());
-        if (out.equals("stdout")) options.append("stdout", folder.resolve("stdout").toString());
+        if (in.equals("stdin")) this.options = this.options.append("stdin", this.in.toString());
+        if (out.equals("stdout")) this.options = this.options.append("stdout", this.out.toString());
     }
 
     public Runner(String in, String out, RunOptions options) throws IOException {
@@ -74,7 +74,7 @@ public class Runner {
         }
     }
 
-    private RunInfo run() {
+    private RunInfo run(String... args) {
         try {
             Files.createFile(out);
             out.toFile().setWritable(true, false);
@@ -83,24 +83,24 @@ public class Runner {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return invoker.run(options);
+        return invoker.run(args.length > 0 ? options.append("args", String.join(" ", args)) : options);
     }
 
-    public RunInfo run(TestData testData) {
-        return run(testData.openInputStream());
+    public RunInfo run(TestData testData, String... args) {
+        return run(testData.openInputStream(), args);
     }
 
-    public RunInfo run(InputStream test) {
+    public RunInfo run(InputStream test, String... args) {
         try {
             clear(folder, executable.getFileName().toString());
             Files.copy(test, in, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return run();
+        return run(args);
     }
 
-    public TestData getOutput() {
+    public PathData getOutput() {
         return new PathData(out);
     }
 }

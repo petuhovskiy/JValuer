@@ -61,11 +61,30 @@ public class Local {
         else return Runtime.getRuntime().exec(new String[]{"bash", "-c", cmd});
     }
 
+    //TODO
+    /*
+        public static Process execute(String... cmd) throws IOException {
+        if (isWindows()) return Runtime.getRuntime().exec(cmd);
+        else {
+            String[] args = new String[cmd.length + 2];
+            args[0] = "bash";
+            args[1] = "-c";
+            System.arraycopy(cmd, 0, args, 2, cmd.length);
+            return Runtime.getRuntime().exec(args);
+        }
+    }
+     */
+
     public static boolean isDebug() {
         return debug;
     }
 
     public static void setDebug(boolean debug) {
         Local.debug = debug;
+    }
+
+    public static String getExecutableSuffix() {
+        if (isWindows()) return ".exe";
+        else return ".out";
     }
 }

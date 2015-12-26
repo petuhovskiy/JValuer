@@ -111,8 +111,8 @@ public class TestsChecker {
         }
 
         RunOptions options = new RunOptions("trusted", "");
-        if (time != null && !time.isEmpty()) options.append("time_limit", time);
-        if (memory != null && !memory.isEmpty()) options.append("memory_limit", memory);
+        if (time != null && !time.isEmpty()) options = options.append("time_limit", time);
+        if (memory != null && !memory.isEmpty()) options = options.append("memory_limit", memory);
 
         Runner runner = new Runner(inFile, outFile, options);
         Grader grader = new Grader(runner, new Estimator(new TokenChecker()));

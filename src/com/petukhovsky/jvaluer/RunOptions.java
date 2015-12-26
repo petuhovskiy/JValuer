@@ -1,26 +1,30 @@
 package com.petukhovsky.jvaluer;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Arthur on 12/18/2015.
  */
 public class RunOptions {
-    private Map<String, String> params;
+    private HashMap<String, String> params;
 
     public RunOptions(){
         params = new HashMap<>();
     }
 
+    private RunOptions(HashMap<String, String> map) {
+        this.params = map;
+    }
+
     public RunOptions(String key, String value){
         this();
-        append(key, value);
+        params.put(key, value);
     }
 
     public RunOptions append(String key, String value) {
-        params.put(key, value);
-        return this;
+        HashMap<String, String> map = new HashMap<>(params);
+        map.put(key, value);
+        return new RunOptions(map);
     }
 
     public boolean hasParameter(String key) {
