@@ -34,7 +34,7 @@ public class CompareSolutions {
         if (checkerSource.isEmpty()) checker = new TokenChecker();
         else checker = new TestlibChecker(Paths.get(checkerSource));
 
-        Language language = Language.GNU_CPP;
+        Language language = Language.GNU_CPP11;
 
         CompilationResult compiledGen = language.compile(Paths.get(genSource));
         if (!compiledGen.isSuccess()) {
@@ -45,7 +45,7 @@ public class CompareSolutions {
         System.out.println("Compiled successfully");
 
         CompilationResult compiled1 = language.compile(Paths.get(source1));
-        if (!compiledGen.isSuccess()) {
+        if (!compiled1.isSuccess()) {
             System.out.println("Error while compiling");
             System.out.println(compiledGen.getComment());
             return;
@@ -60,7 +60,7 @@ public class CompareSolutions {
 
         while (true) {
             CompilationResult compiled2 = language.compile(Paths.get(source2));
-            if (!compiledGen.isSuccess()) {
+            if (!compiled2.isSuccess()) {
                 System.out.println("Error while compiling");
                 System.out.println(compiledGen.getComment());
                 return;

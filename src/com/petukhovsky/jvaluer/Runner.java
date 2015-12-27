@@ -38,6 +38,8 @@ public class Runner {
         this(Files.createTempDirectory(""), in, out, options);
         this.folder.toFile().deleteOnExit();
         this.executable.toFile().deleteOnExit();
+        this.in.toFile().deleteOnExit();
+        this.out.toFile().deleteOnExit();
     }
 
     private void clear(Path path, String... values) throws IOException {

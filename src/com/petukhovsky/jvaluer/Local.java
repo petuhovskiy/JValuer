@@ -36,6 +36,7 @@ public class Local {
             if (isOSX()) runexe = loadResource("/runexe_osx");
             if (isUnix()) runexe = loadResource("/runexe_linux");
             runexe.toFile().setExecutable(true);
+            runexe.toFile().deleteOnExit();
         }
         return runexe;
     }
