@@ -13,6 +13,7 @@ import java.util.Scanner;
  */
 public class TestsChecker {
     public static void main(String[] args) throws IOException {
+        System.out.println("TestsChecker v0.2. By defaults use input.txt/output.txt");
         String inFile = "input.txt";
         String outFile = "output.txt";
         String exe = null;

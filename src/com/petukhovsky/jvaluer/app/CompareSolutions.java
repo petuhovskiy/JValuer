@@ -15,6 +15,7 @@ import java.util.Scanner;
  */
 public class CompareSolutions {
     public static void main(String[] args) throws IOException {
+        System.out.println("Solutions comparator v0.2. Defaults: TokenChecker, 100 tests, stdin, stdout.");
         Scanner sc = new Scanner(System.in);
         System.out.print("Generator source: ");
         String genSource = sc.nextLine().trim();
@@ -23,8 +24,8 @@ public class CompareSolutions {
         System.out.print("Test solution: ");
         String source2 = sc.nextLine().trim();
         System.out.print("Count: ");
-        int count = sc.nextInt();
-        sc.nextLine();
+        String countString = sc.nextLine().trim();
+        int count = countString.isEmpty() ? 100 : Integer.parseInt(countString);
         System.out.print("Test pattern: ");
         String pattern = sc.nextLine().trim();
         System.out.print("Checker: ");
@@ -52,7 +53,7 @@ public class CompareSolutions {
         }
         System.out.println("Compiled successfully");
 
-        Grader grader = new Grader(new Runner("stdin", "stdout", new RunOptions("trusted", "").append("time_limit", "1s").append("memory_limit", "256m")), new Estimator(checker));
+        Grader grader = new Grader(new Runner("stdin", "stdout", new RunOptions("trusted", "").append("time_limit", "5s").append("memory_limit", "512m")), new Estimator(checker));
         Runner runner = new Runner("stdin", "stdout", new RunOptions("trusted", ""));
         runner.provideExecutable(compiled1.getExe());
 
@@ -73,10 +74,10 @@ public class CompareSolutions {
                 GeneratedData test = generator.generate(pattern.replaceAll("\\$", String.valueOf(i)));
                 RunInfo info = test.getInfo();
                 System.out.println("Test " + i + " generated: " + info.getPassedTime() + "ms, exitcode " + info.getExitCode());
-                runner.run(test);
+                System.out.println("Model solution: " + new TestVerdict(new CheckResult(true, "ok"), runner.run(test), "Accepted"));
                 TestData answer = runner.getOutput();
                 TestVerdict verdict = grader.test(test, answer);
-                System.out.println("Test " + i + " " + verdict);
+                System.out.println("Grade solution: " + verdict);
                 if (!verdict.isAccepted()) {
                     try (InputStream is = test.openInputStream()) {
                         Files.copy(is, Paths.get("in.txt"), StandardCopyOption.REPLACE_EXISTING);

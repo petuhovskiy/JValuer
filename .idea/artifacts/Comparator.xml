@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="Comparator">
+    <output-path>$PROJECT_DIR$/out/artifacts/Comparator</output-path>
+    <root id="archive" name="Comparator.jar">
+      <element id="module-output" name="JValuer" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/Comparator/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>

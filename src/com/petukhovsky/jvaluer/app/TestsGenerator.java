@@ -14,6 +14,7 @@ import java.util.Scanner;
  */
 public class TestsGenerator {
     public static void main(String[] args) throws IOException {
+        System.out.println("TestsGenerator v0.1. Testlib generator support.");
         Scanner sc = new Scanner(System.in);
         System.out.print("Generator source: ");
         String source = sc.nextLine().trim();
