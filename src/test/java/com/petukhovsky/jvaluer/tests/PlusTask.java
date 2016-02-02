@@ -22,17 +22,14 @@ public class PlusTask {
         try {
             sourcePath = Files.createTempFile("plus", ".cpp");
         } catch (IOException e) {
-            fail("failed to create temp file");
+            e.printStackTrace();
         }
-        assertNotNull(sourcePath);
         try (InputStream is = PlusTask.class.getResourceAsStream("/plustxt.cpp")) {
             Files.copy(is, sourcePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
-            fail("plus.cpp not found");
         }
         sourcePath.toFile().deleteOnExit();
-        assertTrue(Files.exists(sourcePath));
         Runner runner = null;
         try {
             runner = new Runner("input.txt", "output.txt", new RunOptions("trusted", ""));
@@ -47,8 +44,6 @@ public class PlusTask {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assertNotNull(result);
-        assertTrue(result.isSuccess());
         runner.provideExecutable(result.getExe());
         RunInfo info = runner.run(new StringData("5 8"));
         assertEquals(info.getExitCode(), 0);
@@ -57,5 +52,50 @@ public class PlusTask {
         assertTrue(data.exists());
         AtomScanner scanner = new AtomScanner(data);
         assertEquals(13, scanner.nextInt());
+        scanner.close();
+    }
+
+    @Test
+    public void compileTest() {
+        Path sourcePath = null;
+        try {
+            sourcePath = Files.createTempFile("plus", ".cpp");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try (InputStream is = PlusTask.class.getResourceAsStream("/plustxt.cpp")) {
+            Files.copy(is, sourcePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        sourcePath.toFile().deleteOnExit();
+        Language language = Language.GNU_CPP11;
+        CompilationResult result = null;
+        try {
+            result = language.compile(sourcePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertNotNull(result);
+        assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void getSourceTest() {
+        Path sourcePath = null;
+        try {
+            sourcePath = Files.createTempFile("plus", ".cpp");
+        } catch (IOException e) {
+            fail("failed to create temp file");
+        }
+        assertNotNull(sourcePath);
+        try (InputStream is = PlusTask.class.getResourceAsStream("/plustxt.cpp")) {
+            Files.copy(is, sourcePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail("plus.cpp not found");
+        }
+        sourcePath.toFile().deleteOnExit();
+        assertTrue(Files.exists(sourcePath));
     }
 }
