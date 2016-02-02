@@ -56,7 +56,7 @@ public class AtomScanner {
         }
     }
 
-    char nextChar() {
+    public char nextChar() {
         if (end) throw new NullPointerException("End was reached");
         ensureBuffer();
         return buf[it++];
@@ -76,7 +76,7 @@ public class AtomScanner {
         return sb.toString();
     }
 
-    int nextInt() {
+    public int nextInt() {
         moveNext();
         if (!end && buf[it] == '-') {
             it++;
@@ -95,7 +95,7 @@ public class AtomScanner {
         return result;
     }
 
-    long nextLong() {
+    public long nextLong() {
         moveNext();
         if (!end && buf[it] == '-') {
             it++;
