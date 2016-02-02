@@ -14,6 +14,7 @@ public enum RunVerdict {
     FAIL("Fail");
 
     private String text;
+
     RunVerdict(String text) {
         this.text = text;
     }

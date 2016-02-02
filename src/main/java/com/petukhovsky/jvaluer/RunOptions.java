@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class RunOptions {
     private HashMap<String, String> params;
 
-    public RunOptions(){
+    public RunOptions() {
         params = new HashMap<>();
     }
 
@@ -16,7 +16,7 @@ public class RunOptions {
         this.params = map;
     }
 
-    public RunOptions(String key, String value){
+    public RunOptions(String key, String value) {
         this();
         params.put(key, value);
     }

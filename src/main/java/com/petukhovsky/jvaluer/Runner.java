@@ -27,8 +27,8 @@ public class Runner {
         this.invoker = Local.getInvoker();
         this.executable = folder.resolve("solution" + Local.getExecutableSuffix());
         this.options = options
-                            .append("executable", executable.toString())
-                            .append("folder", folder.toString());
+                .append("executable", executable.toString())
+                .append("folder", folder.toString());
         if (in.equals("stdin")) this.options = this.options.append("stdin", this.in.toString());
         if (out.equals("stdout")) this.options = this.options.append("stdout", this.out.toString());
         if (out.equals("stderr")) this.options = this.options.append("stderr", this.out.toString());
@@ -44,10 +44,11 @@ public class Runner {
 
     private void clear(Path path, String... values) throws IOException {
         Set<String> list = Arrays.stream(values).distinct().collect(Collectors.toSet());
-        Files.walkFileTree(path, new SimpleFileVisitor<Path>(){
+        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                if (!(file.getParent().equals(path) && list.contains(file.getFileName().toString()))) Files.delete(file);
+                if (!(file.getParent().equals(path) && list.contains(file.getFileName().toString())))
+                    Files.delete(file);
                 return FileVisitResult.CONTINUE;
             }
 

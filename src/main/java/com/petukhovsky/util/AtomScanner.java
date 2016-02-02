@@ -68,7 +68,7 @@ public class AtomScanner {
         StringBuilder sb = new StringBuilder();
         while (!end) {
             int l = it;
-            while (++it < len && !delim(buf[it]));
+            while (++it < len && !delim(buf[it])) ;
             sb.append(buf, l, it - l);
             ensureBuffer();
             if (delim(buf[it])) break;

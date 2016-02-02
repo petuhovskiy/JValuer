@@ -1,0 +1,47 @@
+group 'com.petukhovsky.jvaluer'
+version '0.1-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+jar {
+    baseName = 'tests-checker'
+    version = '0.2.0-checker'
+    manifest {
+        attributes 'Main-Class': 'com.petukhovsky.jvaluer.app.TestsChecker'
+    }
+}
+
+jar {
+    baseName = 'tests-generator'
+    version = '0.1.0-generator'
+    manifest {
+        attributes 'Main-Class': 'com.petukhovsky.jvaluer.app.TestsGenerator'
+    }
+}
+
+jar {
+    baseName = 'comparator'
+    version = '0.2.0-comparator'
+    manifest {
+        attributes 'Main-Class': 'com.petukhovsky.jvaluer.app.CompareSolutions'
+    }
+}
+
+jar {
+    baseName = 'tests-solver'
+    version = '0.1.0-solver'
+    manifest {
+        attributes 'Main-Class': 'com.petukhovsky.jvaluer.app.TestsSolver'
+    }
+}
