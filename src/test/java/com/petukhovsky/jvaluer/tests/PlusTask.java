@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Random;
 
 import static org.junit.Assert.*;
 
@@ -98,4 +99,49 @@ public class PlusTask {
         sourcePath.toFile().deleteOnExit();
         assertTrue(Files.exists(sourcePath));
     }
+
+    @Test
+    public void runTests() {
+        Path sourcePath = null;
+        try {
+            sourcePath = Files.createTempFile("plus", ".cpp");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try (InputStream is = PlusTask.class.getResourceAsStream("/plustxt.cpp")) {
+            Files.copy(is, sourcePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        sourcePath.toFile().deleteOnExit();
+        Runner runner = null;
+        try {
+            runner = new Runner("input.txt", "output.txt", new RunOptions("trusted", ""));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertNotNull(runner);
+        Language language = Language.GNU_CPP11;
+        CompilationResult result = null;
+        try {
+            result = language.compile(sourcePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        runner.provideExecutable(result.getExe());
+        Random random = new Random(1337);
+        for (int i = 0; i < 50; i++) {
+            int a = random.nextInt(1000000);
+            int b = random.nextInt(1000000);
+            RunInfo info = runner.run(new StringData(a + " " + b));
+            assertEquals(info.getExitCode(), 0);
+            assertEquals(info.getRunVerdict(), RunVerdict.SUCCESS);
+            PathData data = runner.getOutput();
+            assertTrue(data.exists());
+            AtomScanner scanner = new AtomScanner(data);
+            assertEquals(a + b, scanner.nextInt());
+            scanner.close();
+        }
+    }
+
 }
