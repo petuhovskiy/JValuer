@@ -37,14 +37,41 @@ public enum Language {
         }
     }
 
-    public static Language detect(Path source) {
+    public static Language findByPath(Path source) {
         String name = source.getFileName().toString();
         int pos = name.lastIndexOf('.');
         if (pos == -1) return null;
         return findByExtension(name.substring(pos + 1));
     }
 
+    public static Language findByName(String name) {
+        switch (name) {
+            case "cpp":
+                return GNU_CPP;
+            case "c++":
+                return GNU_CPP;
+            case "сишка":
+                return GNU_CPP;
+            case "плюсы":
+                return GNU_CPP;
+            case "++":
+                return GNU_CPP;
+            case "11":
+                return GNU_CPP11;
+            case "c++11":
+                return GNU_CPP11;
+            case "cpp11":
+                return GNU_CPP11;
+            default:
+                return null;
+        }
+    }
+
     public Compiler compiler() {
         return compiler;
+    }
+
+    public String getName() {
+        return name;
     }
 }

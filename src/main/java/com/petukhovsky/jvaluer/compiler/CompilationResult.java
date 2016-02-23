@@ -30,4 +30,9 @@ public class CompilationResult {
         return comment;
     }
 
+    @Override
+    public String toString() {
+        return (isSuccess() ? "Compiled successfully" : "Compilation error") + System.lineSeparator() + getComment();
+    }
+
 }

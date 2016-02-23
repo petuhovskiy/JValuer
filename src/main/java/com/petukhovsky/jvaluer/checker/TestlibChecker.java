@@ -7,7 +7,6 @@ import com.petukhovsky.jvaluer.Runner;
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.test.StringTest;
 import com.petukhovsky.jvaluer.test.Test;
-import com.sun.istack.internal.NotNull;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -21,7 +20,7 @@ public class TestlibChecker extends Checker implements Closeable, AutoCloseable 
     private Path exe;
     private Runner runner;
 
-    public TestlibChecker(@NotNull Path source, @NotNull RunOptions options, @NotNull Language language) throws IOException {
+    public TestlibChecker(Path source, RunOptions options, Language language) throws IOException {
         CompilationResult result = Language.GNU_CPP11.compiler().compile(source);
         if (!result.isSuccess()) throw new IOException("Can't compile checker:\n" + result.getComment());
         this.exe = result.getExe();
@@ -30,7 +29,7 @@ public class TestlibChecker extends Checker implements Closeable, AutoCloseable 
     }
 
     public TestlibChecker(Path source) throws IOException {
-        this(source, new RunOptions("trusted", "").append("time_limit", "10s").append("memory_limit", "512M"), Language.detect(source));
+        this(source, new RunOptions("trusted", "").append("time_limit", "10s").append("memory_limit", "512M"), Language.findByPath(source));
     }
 
     @Override

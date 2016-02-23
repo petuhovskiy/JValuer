@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +30,9 @@ public class RunnableCompiler extends Compiler {
 
     @Override
     public CompilationResult compile(Path output, Path source, String... defines) {
+        output = output.toAbsolutePath();
+        source = source.toAbsolutePath();
+        logger.info("Compile " + source + " to " + output + " with defines = " + Arrays.toString(defines));
         try {
             Files.deleteIfExists(output);
         } catch (IOException e) {

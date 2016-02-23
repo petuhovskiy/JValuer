@@ -4,7 +4,6 @@ import com.petukhovsky.jvaluer.invoker.DefaultInvoker;
 import com.petukhovsky.jvaluer.invoker.Invoker;
 import com.petukhovsky.jvaluer.test.PathTest;
 import com.petukhovsky.jvaluer.test.Test;
-import com.sun.istack.internal.NotNull;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -120,7 +119,7 @@ public class Runner implements Closeable, AutoCloseable {
         return new PathTest(out);
     }
 
-    public void setInvoker(@NotNull Invoker invoker) {
+    public void setInvoker(Invoker invoker) {
         this.invoker = invoker;
     }
 
