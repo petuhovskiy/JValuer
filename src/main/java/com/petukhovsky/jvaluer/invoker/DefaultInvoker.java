@@ -1,5 +1,9 @@
-package com.petukhovsky.jvaluer;
+package com.petukhovsky.jvaluer.invoker;
 
+import com.petukhovsky.jvaluer.Local;
+import com.petukhovsky.jvaluer.RunInfo;
+import com.petukhovsky.jvaluer.RunOptions;
+import com.petukhovsky.jvaluer.RunVerdict;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -8,11 +12,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Arthur on 12/18/2015.
  */
 public class DefaultInvoker implements Invoker {
+
+    private static Logger logger = Logger.getLogger(DefaultInvoker.class.getName());
 
     private static Path runexe = Local.getRunExe();
     private static DocumentBuilderFactory factory;
@@ -25,12 +33,11 @@ public class DefaultInvoker implements Invoker {
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }
+        logger.fine("Default invoker dom builder static init complete");
     }
 
     @Override
     public RunInfo run(RunOptions options) {
-        RunInfo info = new RunInfo();
-
         try {
             String cmd = String.format("%s -xml", runexe);
 
@@ -46,7 +53,7 @@ public class DefaultInvoker implements Invoker {
             cmd += " \"" + options.getParameter("executable") + "\"";
             if (options.hasParameter("args")) cmd += " " + options.getParameter("args");
 
-            if (Local.isDebug()) System.out.println("Invoker runs runexe with cmd: " + cmd);
+            logger.info("Invoker runs runexe with cmd: " + cmd);
 
             Process process = Local.execute(cmd);
             process.waitFor();
@@ -60,11 +67,10 @@ public class DefaultInvoker implements Invoker {
             int consumedMemory = Integer.parseInt(doc.getElementsByTagName("consumedMemory").item(0).getTextContent());
             String comment = doc.getElementsByTagName("comment").item(0).getTextContent();
 
-            info.completed(RunVerdict.valueOf(verdict), exitCode, userTime, kernelTime, passedTime, consumedMemory, comment);
+            return RunInfo.completed(RunVerdict.valueOf(verdict), exitCode, userTime, kernelTime, passedTime, consumedMemory, comment);
         } catch (IOException | InterruptedException | SAXException e) {
-            info.crashed("Crashed while invoking");
+            logger.log(Level.SEVERE, "DefaultInvoker.run() is crashed", e);
+            return RunInfo.crashed("Crashed while invoking");
         }
-
-        return info;
     }
 }

@@ -1,6 +1,9 @@
-package com.petukhovsky.jvaluer.tests;
+package com.petukhovsky.jvaluer.units;
 
 import com.petukhovsky.jvaluer.*;
+import com.petukhovsky.jvaluer.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.test.PathTest;
+import com.petukhovsky.jvaluer.test.StringTest;
 import com.petukhovsky.util.AtomScanner;
 import org.junit.Test;
 
@@ -41,15 +44,15 @@ public class PlusTask {
         Language language = Language.GNU_CPP11;
         CompilationResult result = null;
         try {
-            result = language.compile(sourcePath);
+            result = language.compiler().compile(sourcePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
         runner.provideExecutable(result.getExe());
-        RunInfo info = runner.run(new StringData("5 8"));
+        RunInfo info = runner.run(new StringTest("5 8"));
         assertEquals(info.getExitCode(), 0);
         assertEquals(info.getRunVerdict(), RunVerdict.SUCCESS);
-        PathData data = runner.getOutput();
+        PathTest data = runner.getOutput();
         assertTrue(data.exists());
         AtomScanner scanner = new AtomScanner(data);
         assertEquals(13, scanner.nextInt());
@@ -73,7 +76,7 @@ public class PlusTask {
         Language language = Language.GNU_CPP11;
         CompilationResult result = null;
         try {
-            result = language.compile(sourcePath);
+            result = language.compiler().compile(sourcePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -124,7 +127,7 @@ public class PlusTask {
         Language language = Language.GNU_CPP11;
         CompilationResult result = null;
         try {
-            result = language.compile(sourcePath);
+            result = language.compiler().compile(sourcePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -133,10 +136,10 @@ public class PlusTask {
         for (int i = 0; i < 50; i++) {
             int a = random.nextInt(1000000);
             int b = random.nextInt(1000000);
-            RunInfo info = runner.run(new StringData(a + " " + b));
+            RunInfo info = runner.run(new StringTest(a + " " + b));
             assertEquals(info.getExitCode(), 0);
             assertEquals(info.getRunVerdict(), RunVerdict.SUCCESS);
-            PathData data = runner.getOutput();
+            PathTest data = runner.getOutput();
             assertTrue(data.exists());
             AtomScanner scanner = new AtomScanner(data);
             assertEquals(a + b, scanner.nextInt());

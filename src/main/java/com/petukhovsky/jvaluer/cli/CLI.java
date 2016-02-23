@@ -1,4 +1,4 @@
-package com.petukhovsky.jvaluer.app;
+package com.petukhovsky.jvaluer.cli;
 
 import java.io.PrintStream;
 import java.util.Arrays;

@@ -1,5 +1,12 @@
 package com.petukhovsky.jvaluer;
 
+import com.petukhovsky.jvaluer.invoker.DefaultInvoker;
+import com.petukhovsky.jvaluer.invoker.Invoker;
+import com.petukhovsky.jvaluer.test.PathTest;
+import com.petukhovsky.jvaluer.test.Test;
+import com.sun.istack.internal.NotNull;
+
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
@@ -11,24 +18,29 @@ import java.util.stream.Collectors;
 /**
  * Created by Arthur on 12/18/2015.
  */
-public class Runner {
+public class Runner implements Closeable, AutoCloseable {
 
-    private Path folder, executable, in, out;
+    private Path folder;
+    private Path executable;
+    private Path in, out;
     private Invoker invoker;
     private RunOptions options;
 
     Runner(Path folder, String in, String out, RunOptions options) {
         this.folder = folder;
-        this.folder.toFile().setExecutable(true, false);
-        this.folder.toFile().setReadable(true, false);
-        this.folder.toFile().setWritable(true, false);
         this.in = folder.resolve(in);
         this.out = folder.resolve(out);
-        this.invoker = Local.getInvoker();
         this.executable = folder.resolve("solution" + Local.getExecutableSuffix());
+        this.invoker = new DefaultInvoker();
+
+        this.executable.toFile().setExecutable(true, false);
+        this.in.toFile().setReadable(true, false);
+        this.out.toFile().setWritable(true, false);
+
         this.options = options
                 .append("executable", executable.toString())
                 .append("folder", folder.toString());
+
         if (in.equals("stdin")) this.options = this.options.append("stdin", this.in.toString());
         if (out.equals("stdout")) this.options = this.options.append("stdout", this.out.toString());
         if (out.equals("stderr")) this.options = this.options.append("stderr", this.out.toString());
@@ -83,15 +95,14 @@ public class Runner {
             Files.createFile(out);
             out.toFile().setWritable(true, false);
             in.toFile().setReadable(true, false);
-            in.toFile().setExecutable(true, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return invoker.run(args.length > 0 ? options.append("args", String.join(" ", args)) : options);
     }
 
-    public RunInfo run(TestData testData, String... args) {
-        return run(testData.openInputStream(), args);
+    public RunInfo run(Test test, String... args) {
+        return run(test.openInputStream(), args);
     }
 
     public RunInfo run(InputStream test, String... args) {
@@ -105,7 +116,17 @@ public class Runner {
         return run(args);
     }
 
-    public PathData getOutput() {
-        return new PathData(out);
+    public PathTest getOutput() {
+        return new PathTest(out);
+    }
+
+    public void setInvoker(@NotNull Invoker invoker) {
+        this.invoker = invoker;
+    }
+
+    @Override
+    public void close() throws IOException {
+        clear();
+        Files.deleteIfExists(folder);
     }
 }

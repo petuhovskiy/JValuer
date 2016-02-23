@@ -1,4 +1,4 @@
-package com.petukhovsky.jvaluer;
+package com.petukhovsky.jvaluer.compiler;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -1,4 +1,4 @@
-package com.petukhovsky.jvaluer;
+package com.petukhovsky.jvaluer.test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,11 +8,11 @@ import java.nio.file.Path;
 /**
  * Created by Arthur on 12/21/2015.
  */
-public class PathData extends TestData {
+public class PathTest extends Test {
 
     private Path path;
 
-    public PathData(Path path) {
+    public PathTest(Path path) {
         this.path = path;
     }
 

@@ -12,20 +12,27 @@ public class RunInfo {
     private int consumedMemory;
     private String comment;
 
-    public void crashed(String comment) {
-        runVerdict = RunVerdict.CRASH;
-        this.comment = comment;
+    private RunInfo() {
     }
 
-    public void completed(RunVerdict runVerdict, int exitCode, int userTime, int kernelTime, int passedTime, int consumedMemory, String comment) {
-        this.runVerdict = runVerdict;
-        this.exitCode = exitCode;
-        if (exitCode != 0 && this.runVerdict == RunVerdict.SUCCESS) this.runVerdict = RunVerdict.RUNTIME_ERROR;
-        this.userTime = userTime;
-        this.kernelTime = kernelTime;
-        this.passedTime = passedTime;
-        this.consumedMemory = consumedMemory;
-        this.comment = comment;
+    public static RunInfo crashed(String comment) {
+        RunInfo info = new RunInfo();
+        info.runVerdict = RunVerdict.CRASH;
+        info.comment = comment;
+        return info;
+    }
+
+    public static RunInfo completed(RunVerdict runVerdict, int exitCode, int userTime, int kernelTime, int passedTime, int consumedMemory, String comment) {
+        RunInfo info = new RunInfo();
+        info.runVerdict = runVerdict;
+        info.exitCode = exitCode;
+        if (exitCode != 0 && info.runVerdict == RunVerdict.SUCCESS) info.runVerdict = RunVerdict.RUNTIME_ERROR;
+        info.userTime = userTime;
+        info.kernelTime = kernelTime;
+        info.passedTime = passedTime;
+        info.consumedMemory = consumedMemory;
+        info.comment = comment;
+        return info;
     }
 
     public RunVerdict getRunVerdict() {

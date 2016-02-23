@@ -1,12 +1,16 @@
 package com.petukhovsky.jvaluer;
 
+import com.petukhovsky.jvaluer.test.GeneratedTest;
+import com.petukhovsky.jvaluer.test.StringTest;
+
+import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Path;
 
 /**
  * Created by Arthur on 12/25/2015.
  */
-public class Generator {
+public class Generator implements Closeable, AutoCloseable {
 
     private Path exe;
     private Runner runner;
@@ -23,8 +27,13 @@ public class Generator {
         this.runner.provideExecutable(exe);
     }
 
-    public GeneratedData generate(String... args) {
-        RunInfo info = runner.run(new StringData(""), args);
-        return new GeneratedData(runner.getOutput().getPath(), info);
+    public GeneratedTest generate(String... args) {
+        RunInfo info = runner.run(new StringTest(""), args);
+        return new GeneratedTest(runner.getOutput().getPath(), info);
+    }
+
+    @Override
+    public void close() throws IOException {
+        runner.close();
     }
 }

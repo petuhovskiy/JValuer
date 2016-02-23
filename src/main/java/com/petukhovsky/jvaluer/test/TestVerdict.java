@@ -1,4 +1,8 @@
-package com.petukhovsky.jvaluer;
+package com.petukhovsky.jvaluer.test;
+
+import com.petukhovsky.jvaluer.RunInfo;
+import com.petukhovsky.jvaluer.RunVerdict;
+import com.petukhovsky.jvaluer.checker.CheckResult;
 
 /**
  * Created by Arthur on 12/20/2015.

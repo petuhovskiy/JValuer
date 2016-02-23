@@ -1,4 +1,4 @@
-package com.petukhovsky.jvaluer;
+package com.petukhovsky.jvaluer.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,11 +10,11 @@ import java.nio.file.StandardCopyOption;
 /**
  * Created by Arthur on 12/21/2015.
  */
-public class StringData extends TestData {
+public class StringTest extends Test {
 
     String data;
 
-    public StringData(String data) {
+    public StringTest(String data) {
         this.data = data;
     }
 

@@ -1,4 +1,4 @@
-package com.petukhovsky.jvaluer;
+package com.petukhovsky.jvaluer.checker;
 
 /**
  * Created by Arthur on 12/19/2015.

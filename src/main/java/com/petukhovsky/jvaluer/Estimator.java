@@ -1,17 +1,22 @@
 package com.petukhovsky.jvaluer;
 
+import com.petukhovsky.jvaluer.checker.CheckResult;
+import com.petukhovsky.jvaluer.checker.Checker;
+import com.petukhovsky.jvaluer.test.Test;
+import com.petukhovsky.jvaluer.test.TestVerdict;
+
 /**
  * Created by Arthur on 12/20/2015.
  */
 public class Estimator {
 
-    Checker checker;
+    private Checker checker;
 
     public Estimator(Checker checker) {
         this.checker = checker;
     }
 
-    public TestVerdict estimate(TestData in, TestData answer, TestData out, RunInfo info) {
+    public TestVerdict estimate(Test in, Test answer, Test out, RunInfo info) {
         if (info.getRunVerdict() != RunVerdict.SUCCESS)
             return new TestVerdict(null, info, info.getRunVerdict().getText());
         if (!out.exists())
