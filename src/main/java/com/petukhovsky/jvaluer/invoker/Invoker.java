@@ -1,7 +1,7 @@
 package com.petukhovsky.jvaluer.invoker;
 
-import com.petukhovsky.jvaluer.RunInfo;
-import com.petukhovsky.jvaluer.RunOptions;
+import com.petukhovsky.jvaluer.run.RunInfo;
+import com.petukhovsky.jvaluer.run.RunOptions;
 
 /**
  * Created by Arthur on 12/18/2015.

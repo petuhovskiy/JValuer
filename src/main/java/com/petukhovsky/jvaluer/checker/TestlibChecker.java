@@ -1,12 +1,12 @@
 package com.petukhovsky.jvaluer.checker;
 
 import com.petukhovsky.jvaluer.Language;
-import com.petukhovsky.jvaluer.RunInfo;
-import com.petukhovsky.jvaluer.RunOptions;
-import com.petukhovsky.jvaluer.Runner;
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
-import com.petukhovsky.jvaluer.test.StringTest;
-import com.petukhovsky.jvaluer.test.Test;
+import com.petukhovsky.jvaluer.run.RunInfo;
+import com.petukhovsky.jvaluer.run.RunOptions;
+import com.petukhovsky.jvaluer.run.Runner;
+import com.petukhovsky.jvaluer.test.StringData;
+import com.petukhovsky.jvaluer.test.TestData;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -33,8 +33,8 @@ public class TestlibChecker extends Checker implements Closeable, AutoCloseable 
     }
 
     @Override
-    public CheckResult check(Test in, Test answer, Test out) {
-        RunInfo info = runner.run(new StringTest(""), String.format("\"%s\" \"%s\" \"%s\"", in.getPath(), out.getPath(), answer.getPath()));
+    public CheckResult check(TestData in, TestData answer, TestData out) {
+        RunInfo info = runner.run(new StringData(""), String.format("\"%s\" \"%s\" \"%s\"", in.getPath(), out.getPath(), answer.getPath()));
         return new CheckResult(info.getExitCode() == 0, runner.getOutput().getString());
     }
 

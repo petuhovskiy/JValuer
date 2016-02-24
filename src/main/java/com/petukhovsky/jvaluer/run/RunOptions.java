@@ -1,4 +1,4 @@
-package com.petukhovsky.jvaluer;
+package com.petukhovsky.jvaluer.run;
 
 import java.util.HashMap;
 

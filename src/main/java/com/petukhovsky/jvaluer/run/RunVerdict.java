@@ -1,4 +1,4 @@
-package com.petukhovsky.jvaluer;
+package com.petukhovsky.jvaluer.run;
 
 /**
  * Created by Arthur on 12/18/2015.

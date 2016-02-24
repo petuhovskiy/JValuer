@@ -17,7 +17,7 @@ public class CheckResult {
     public CheckResult(double result, String comment) {
         this.result = result;
         this.comment = comment;
-        this.isCorrect = result != 0D;
+        this.isCorrect = result == 1D;
     }
 
     public boolean isCorrect() {

@@ -1,6 +1,6 @@
 package com.petukhovsky.util;
 
-import com.petukhovsky.jvaluer.test.Test;
+import com.petukhovsky.jvaluer.test.TestData;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,8 +20,8 @@ public class AtomScanner {
     int it = 0;
     boolean end = false;
 
-    public AtomScanner(Test test) {
-        this(test.openInputStream());
+    public AtomScanner(TestData testData) {
+        this(testData.openInputStream());
     }
 
     public AtomScanner(InputStream is) {

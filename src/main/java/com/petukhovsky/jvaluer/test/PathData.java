@@ -8,11 +8,11 @@ import java.nio.file.Path;
 /**
  * Created by Arthur on 12/21/2015.
  */
-public class PathTest extends Test {
+public class PathData extends TestData {
 
     private Path path;
 
-    public PathTest(Path path) {
+    public PathData(Path path) {
         this.path = path;
     }
 

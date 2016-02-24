@@ -1,9 +1,13 @@
 package com.petukhovsky.jvaluer.units;
 
-import com.petukhovsky.jvaluer.*;
+import com.petukhovsky.jvaluer.Language;
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
-import com.petukhovsky.jvaluer.test.PathTest;
-import com.petukhovsky.jvaluer.test.StringTest;
+import com.petukhovsky.jvaluer.run.RunInfo;
+import com.petukhovsky.jvaluer.run.RunOptions;
+import com.petukhovsky.jvaluer.run.RunVerdict;
+import com.petukhovsky.jvaluer.run.Runner;
+import com.petukhovsky.jvaluer.test.PathData;
+import com.petukhovsky.jvaluer.test.StringData;
 import com.petukhovsky.util.AtomScanner;
 import org.junit.Test;
 
@@ -49,10 +53,10 @@ public class PlusTask {
             e.printStackTrace();
         }
         runner.provideExecutable(result.getExe());
-        RunInfo info = runner.run(new StringTest("5 8"));
+        RunInfo info = runner.run(new StringData("5 8"));
         assertEquals(info.getExitCode(), 0);
         assertEquals(info.getRunVerdict(), RunVerdict.SUCCESS);
-        PathTest data = runner.getOutput();
+        PathData data = runner.getOutput();
         assertTrue(data.exists());
         AtomScanner scanner = new AtomScanner(data);
         assertEquals(13, scanner.nextInt());
@@ -136,10 +140,10 @@ public class PlusTask {
         for (int i = 0; i < 50; i++) {
             int a = random.nextInt(1000000);
             int b = random.nextInt(1000000);
-            RunInfo info = runner.run(new StringTest(a + " " + b));
+            RunInfo info = runner.run(new StringData(a + " " + b));
             assertEquals(info.getExitCode(), 0);
             assertEquals(info.getRunVerdict(), RunVerdict.SUCCESS);
-            PathTest data = runner.getOutput();
+            PathData data = runner.getOutput();
             assertTrue(data.exists());
             AtomScanner scanner = new AtomScanner(data);
             assertEquals(a + b, scanner.nextInt());

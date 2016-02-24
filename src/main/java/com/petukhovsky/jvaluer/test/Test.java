@@ -1,17 +1,22 @@
 package com.petukhovsky.jvaluer.test;
 
-import java.io.InputStream;
-import java.nio.file.Path;
-
 /**
- * Created by Arthur on 12/21/2015.
+ * Created by petuh on 2/24/2016.
  */
-public abstract class Test {
-    abstract public boolean exists();
+public class Test {
+    private TestData in;
+    private TestData out;
 
-    abstract public InputStream openInputStream();
+    public Test(TestData in, TestData out) {
+        this.in = in;
+        this.out = out;
+    }
 
-    abstract public Path getPath();
+    public TestData getIn() {
+        return in;
+    }
 
-    abstract public String getString();
+    public TestData getOut() {
+        return out;
+    }
 }

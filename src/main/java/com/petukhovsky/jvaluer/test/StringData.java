@@ -10,11 +10,11 @@ import java.nio.file.StandardCopyOption;
 /**
  * Created by Arthur on 12/21/2015.
  */
-public class StringTest extends Test {
+public class StringData extends TestData {
 
     String data;
 
-    public StringTest(String data) {
+    public StringData(String data) {
         this.data = data;
     }
 

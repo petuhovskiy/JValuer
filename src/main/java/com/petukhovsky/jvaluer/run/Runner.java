@@ -1,9 +1,10 @@
-package com.petukhovsky.jvaluer;
+package com.petukhovsky.jvaluer.run;
 
+import com.petukhovsky.jvaluer.Local;
 import com.petukhovsky.jvaluer.invoker.DefaultInvoker;
 import com.petukhovsky.jvaluer.invoker.Invoker;
-import com.petukhovsky.jvaluer.test.PathTest;
-import com.petukhovsky.jvaluer.test.Test;
+import com.petukhovsky.jvaluer.test.PathData;
+import com.petukhovsky.jvaluer.test.TestData;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -100,8 +101,8 @@ public class Runner implements Closeable, AutoCloseable {
         return invoker.run(args.length > 0 ? options.append("args", String.join(" ", args)) : options);
     }
 
-    public RunInfo run(Test test, String... args) {
-        return run(test.openInputStream(), args);
+    public RunInfo run(TestData testData, String... args) {
+        return run(testData.openInputStream(), args);
     }
 
     public RunInfo run(InputStream test, String... args) {
@@ -115,8 +116,8 @@ public class Runner implements Closeable, AutoCloseable {
         return run(args);
     }
 
-    public PathTest getOutput() {
-        return new PathTest(out);
+    public PathData getOutput() {
+        return new PathData(out);
     }
 
     public void setInvoker(Invoker invoker) {

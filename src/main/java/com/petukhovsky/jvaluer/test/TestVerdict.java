@@ -1,8 +1,9 @@
 package com.petukhovsky.jvaluer.test;
 
-import com.petukhovsky.jvaluer.RunInfo;
-import com.petukhovsky.jvaluer.RunVerdict;
 import com.petukhovsky.jvaluer.checker.CheckResult;
+import com.petukhovsky.jvaluer.checker.Checker;
+import com.petukhovsky.jvaluer.run.RunInfo;
+import com.petukhovsky.jvaluer.run.RunVerdict;
 
 /**
  * Created by Arthur on 12/20/2015.
@@ -19,8 +20,23 @@ public class TestVerdict {
         this.verdict = verdict;
     }
 
+    public TestVerdict(TestData in, TestData answer, TestData out, RunInfo info, Checker checker) {
+        this.info = info;
+        this.check = null;
+        if (info.getRunVerdict() != RunVerdict.SUCCESS) {
+            this.verdict = info.getRunVerdict().getText();
+            return;
+        }
+        if (!out.exists()) {
+            this.verdict = "Presentation Error";
+            return;
+        }
+        this.check = checker.check(in, answer, out);
+        this.verdict = this.check.isCorrect() ? "Accepted" : "Wrong answer";
+    }
+
     public boolean isAccepted() {
-        return info.getRunVerdict() == RunVerdict.SUCCESS && check.isCorrect();
+        return info.getRunVerdict() == RunVerdict.SUCCESS && check != null && check.isCorrect();
     }
 
     public String getVerdict() {

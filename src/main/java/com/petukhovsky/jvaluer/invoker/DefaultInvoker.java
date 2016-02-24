@@ -1,9 +1,9 @@
 package com.petukhovsky.jvaluer.invoker;
 
 import com.petukhovsky.jvaluer.Local;
-import com.petukhovsky.jvaluer.RunInfo;
-import com.petukhovsky.jvaluer.RunOptions;
-import com.petukhovsky.jvaluer.RunVerdict;
+import com.petukhovsky.jvaluer.run.RunInfo;
+import com.petukhovsky.jvaluer.run.RunOptions;
+import com.petukhovsky.jvaluer.run.RunVerdict;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 

@@ -1,7 +1,7 @@
 package com.petukhovsky.jvaluer.checker;
 
-import com.petukhovsky.jvaluer.RunInfo;
-import com.petukhovsky.jvaluer.test.Test;
+import com.petukhovsky.jvaluer.run.RunInfo;
+import com.petukhovsky.jvaluer.test.TestData;
 
 import java.nio.file.Path;
 
@@ -10,9 +10,9 @@ import java.nio.file.Path;
  */
 public abstract class Checker {
 
-    public CheckResult check(Test in, Test answer, Test out, Path source, RunInfo runInfo) {
+    public CheckResult check(TestData in, TestData answer, TestData out, Path source, RunInfo runInfo) {
         return check(in, answer, out);
     }
 
-    public abstract CheckResult check(Test in, Test answer, Test out);
+    public abstract CheckResult check(TestData in, TestData answer, TestData out);
 }

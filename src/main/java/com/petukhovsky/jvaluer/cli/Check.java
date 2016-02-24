@@ -1,8 +1,8 @@
 package com.petukhovsky.jvaluer.cli;
 
 import com.petukhovsky.jvaluer.Language;
-import com.petukhovsky.jvaluer.RunOptions;
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.run.RunOptions;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,7 +71,7 @@ public class Check implements CommandExecutor {
             if (!result.isSuccess()) return;
             exe = result.getExe();
         }
-        //TODO not yet implemented
+
     }
 
     @Override

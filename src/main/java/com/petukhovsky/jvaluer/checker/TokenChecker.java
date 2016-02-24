@@ -1,6 +1,6 @@
 package com.petukhovsky.jvaluer.checker;
 
-import com.petukhovsky.jvaluer.test.Test;
+import com.petukhovsky.jvaluer.test.TestData;
 import com.petukhovsky.util.AtomScanner;
 
 import java.util.Objects;
@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class TokenChecker extends Checker {
     @Override
-    public CheckResult check(Test in, Test answer, Test out) {
+    public CheckResult check(TestData in, TestData answer, TestData out) {
         if (!out.exists()) return new CheckResult(false, "Presentation error");
         if (!in.exists() || !answer.exists()) return new CheckResult(false, "Internal error - jury has missing files");
         AtomScanner answerScanner = new AtomScanner(answer);

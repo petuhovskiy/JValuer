@@ -1,7 +1,8 @@
-package com.petukhovsky.jvaluer;
+package com.petukhovsky.jvaluer.test;
 
-import com.petukhovsky.jvaluer.test.GeneratedTest;
-import com.petukhovsky.jvaluer.test.StringTest;
+import com.petukhovsky.jvaluer.run.RunInfo;
+import com.petukhovsky.jvaluer.run.RunOptions;
+import com.petukhovsky.jvaluer.run.Runner;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -27,9 +28,9 @@ public class Generator implements Closeable, AutoCloseable {
         this.runner.provideExecutable(exe);
     }
 
-    public GeneratedTest generate(String... args) {
-        RunInfo info = runner.run(new StringTest(""), args);
-        return new GeneratedTest(runner.getOutput().getPath(), info);
+    public GeneratedData generate(String... args) {
+        RunInfo info = runner.run(new StringData(""), args);
+        return new GeneratedData(runner.getOutput().getPath(), info);
     }
 
     @Override
