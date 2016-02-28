@@ -13,6 +13,8 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -20,30 +22,34 @@ import java.util.stream.Collectors;
  */
 public class Runner implements Closeable, AutoCloseable {
 
+    private final static Logger logger = Logger.getLogger(Runner.class.getName());
+
     private Path folder;
     private Path executable;
     private Path in, out;
+    private String inFile, outFile;
     private Invoker invoker;
     private RunOptions options;
 
     Runner(Path folder, String in, String out, RunOptions options) {
+        logger.fine("Creating runner with folder=" + folder + ", in=" + in + ", out=" + out + ", option=" + options);
         this.folder = folder;
+        this.executable = folder.resolve("solution" + Local.getExecutableSuffix());
+
         this.in = folder.resolve(in);
         this.out = folder.resolve(out);
-        this.executable = folder.resolve("solution" + Local.getExecutableSuffix());
+
+        this.inFile = in;
+        this.outFile = out;
+
         this.invoker = new DefaultInvoker();
 
-        this.executable.toFile().setExecutable(true, false);
-        this.in.toFile().setReadable(true, false);
-        this.out.toFile().setWritable(true, false);
+        logger.finer("Set executable file in runner = " + this.executable.toFile().setExecutable(true, false));
+        logger.finer("Set readable file in runner = " + this.in.toFile().setReadable(true, false));
+        logger.finer("Set writable file in runner = " + this.out.toFile().setWritable(true, false));
 
-        this.options = options
-                .append("executable", executable.toString())
-                .append("folder", folder.toString());
-
-        if (in.equals("stdin")) this.options = this.options.append("stdin", this.in.toString());
-        if (out.equals("stdout")) this.options = this.options.append("stdout", this.out.toString());
-        if (out.equals("stderr")) this.options = this.options.append("stderr", this.out.toString());
+        this.options = options;
+        this.updateOptions();
     }
 
     public Runner(String in, String out, RunOptions options) throws IOException {
@@ -76,7 +82,7 @@ public class Runner implements Closeable, AutoCloseable {
         try {
             clear(folder);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, "Can't clear runner folder", e);
         }
     }
 
@@ -84,7 +90,7 @@ public class Runner implements Closeable, AutoCloseable {
         try {
             clear();
             Files.copy(path, executable);
-            executable.toFile().setExecutable(true, false);
+            logger.finer("Set executable file in runner = " + this.executable.toFile().setExecutable(true, false));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -93,8 +99,8 @@ public class Runner implements Closeable, AutoCloseable {
     private RunInfo run(String... args) {
         try {
             Files.createFile(out);
-            out.toFile().setWritable(true, false);
-            in.toFile().setReadable(true, false);
+            logger.finer("Set readable file in runner = " + this.in.toFile().setReadable(true, false));
+            logger.finer("Set writable file in runner = " + this.out.toFile().setWritable(true, false));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -122,6 +128,15 @@ public class Runner implements Closeable, AutoCloseable {
 
     public void setInvoker(Invoker invoker) {
         this.invoker = invoker;
+    }
+
+    private void updateOptions() {
+        this.options = this.options.append("executable", executable.toString())
+                .append("folder", folder.toString());
+
+        if (inFile.equals("stdin")) this.options = this.options.append("stdin", this.in.toString());
+        if (outFile.equals("stdout")) this.options = this.options.append("stdout", this.out.toString());
+        if (outFile.equals("stderr")) this.options = this.options.append("stderr", this.out.toString());
     }
 
     @Override

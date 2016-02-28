@@ -34,4 +34,8 @@ public class RunOptions {
     public String getParameter(String key) {
         return params.get(key);
     }
+
+    public String toString() {
+        return params.toString();
+    }
 }

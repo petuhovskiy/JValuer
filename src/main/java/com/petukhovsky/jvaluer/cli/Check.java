@@ -29,6 +29,9 @@ public class Check implements CommandExecutor {
         Language compileLanguage = null;
         boolean needsCompile = false;
 
+        String input = "stdin";
+        String output = "stdout";
+
         for (int i = 2; i < args.length; i++) {
             String arg = args[i];
 
@@ -59,6 +62,17 @@ public class Check implements CommandExecutor {
 
             if (arg.startsWith("ml=")) {
                 runOptions = runOptions.append("memory_limit", arg.substring("ml=".length()));
+                continue;
+            }
+
+            if (arg.startsWith("in=")) {
+                input = arg.substring("in=".length());
+                continue;
+            }
+
+            if (arg.startsWith("out=")) {
+                output = arg.substring("out=".length());
+                continue;
             }
         }
         if (needsCompile && compileLanguage == null) {
@@ -66,6 +80,7 @@ public class Check implements CommandExecutor {
             return;
         }
         if (needsCompile) {
+            cli.print("Compiling..." + CLI.ln);
             CompilationResult result = compileLanguage.compiler().compile(exe);
             cli.print(result + CLI.ln);
             if (!result.isSuccess()) return;
@@ -77,6 +92,6 @@ public class Check implements CommandExecutor {
     @Override
     public void displayHelp(CLI cli) {
         cli.print("Usage: check {source|exe} {tests} args.." + CLI.ln +
-                "Args examples: compiler={auto|lang} ml=8M tl=5s");
+                "Args examples: check a.cpp tests compile={auto|lang} ml=8M tl=5s");
     }
 }
