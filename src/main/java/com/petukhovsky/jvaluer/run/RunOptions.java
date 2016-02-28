@@ -38,4 +38,10 @@ public class RunOptions {
     public String toString() {
         return params.toString();
     }
+
+    public RunOptions remove(String key) {
+        HashMap<String, String> map = new HashMap<>(params);
+        map.remove(key);
+        return new RunOptions(map);
+    }
 }

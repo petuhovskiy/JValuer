@@ -69,7 +69,7 @@ public class DefaultInvoker implements Invoker {
 
             return RunInfo.completed(RunVerdict.valueOf(verdict), exitCode, userTime, kernelTime, passedTime, consumedMemory, comment);
         } catch (IOException | InterruptedException | SAXException e) {
-            logger.log(Level.SEVERE, "DefaultInvoker.run() is crashed", e);
+            logger.log(Level.SEVERE, "run is crashed", e);
             return RunInfo.crashed("Crashed while invoking");
         }
     }

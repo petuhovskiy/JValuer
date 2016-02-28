@@ -1,7 +1,7 @@
 package com.petukhovsky.jvaluer.checker;
 
 import com.petukhovsky.jvaluer.test.TestData;
-import com.petukhovsky.util.AtomScanner;
+import com.petukhovsky.jvaluer.util.AtomScanner;
 
 import java.util.Objects;
 

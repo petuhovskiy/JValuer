@@ -27,37 +27,23 @@ public class Runner implements Closeable, AutoCloseable {
     private Path folder;
     private Path executable;
     private Path in, out;
-    private String inFile, outFile;
     private Invoker invoker;
     private RunOptions options;
 
-    Runner(Path folder, String in, String out, RunOptions options) {
-        logger.fine("Creating runner with folder=" + folder + ", in=" + in + ", out=" + out + ", option=" + options);
+    Runner(Path folder) {
+        logger.fine("Creating runner with folder=" + folder + ", in=" + in + ", out=" + out);
         this.folder = folder;
         this.executable = folder.resolve("solution" + Local.getExecutableSuffix());
-
-        this.in = folder.resolve(in);
-        this.out = folder.resolve(out);
-
-        this.inFile = in;
-        this.outFile = out;
-
         this.invoker = new DefaultInvoker();
-
-        logger.finer("Set executable file in runner = " + this.executable.toFile().setExecutable(true, false));
-        logger.finer("Set readable file in runner = " + this.in.toFile().setReadable(true, false));
-        logger.finer("Set writable file in runner = " + this.out.toFile().setWritable(true, false));
-
-        this.options = options;
-        this.updateOptions();
+        this.options = new RunOptions("folder", folder.toAbsolutePath().toString())
+                .append("executable", executable.toString());
+        setFiles("stdin", "stdout");
     }
 
-    public Runner(String in, String out, RunOptions options) throws IOException {
-        this(Files.createTempDirectory(""), in, out, options);
+    public Runner() throws IOException {
+        this(Files.createTempDirectory(""));
         this.folder.toFile().deleteOnExit();
         this.executable.toFile().deleteOnExit();
-        this.in.toFile().deleteOnExit();
-        this.out.toFile().deleteOnExit();
     }
 
     private void clear(Path path, String... values) throws IOException {
@@ -130,13 +116,38 @@ public class Runner implements Closeable, AutoCloseable {
         this.invoker = invoker;
     }
 
-    private void updateOptions() {
-        this.options = this.options.append("executable", executable.toString())
-                .append("folder", folder.toString());
+    public void setFiles(String in, String out) {
+        this.in = folder.resolve(in);
+        this.out = folder.resolve(out);
 
-        if (inFile.equals("stdin")) this.options = this.options.append("stdin", this.in.toString());
-        if (outFile.equals("stdout")) this.options = this.options.append("stdout", this.out.toString());
-        if (outFile.equals("stderr")) this.options = this.options.append("stderr", this.out.toString());
+        this.options = this.options.remove("stdin")
+                .remove("stderr")
+                .remove("stdout");
+
+        if (in.equals("stdin")) this.options = this.options.append("stdin", this.in.toString());
+        switch (out) {
+            case "stdout":
+                this.options = this.options.append("stdout", this.out.toString());
+                break;
+            case "stderr":
+                this.options = this.options.append("stderr", this.out.toString());
+                break;
+        }
+    }
+
+    public void setLimits(String timeLimit, String memoryLimit) {
+        this.options = this.options.remove("time_limit")
+                .remove("memory_limit");
+        if (timeLimit != null) this.options = this.options.append("time_limit", timeLimit);
+        if (memoryLimit != null) this.options = this.options.append("memory_limit", memoryLimit);
+    }
+
+    public void setTrusted(boolean trusted) {
+        if (trusted) {
+            this.options = this.options.append("trusted", "");
+        } else {
+            this.options = this.options.remove("trusted");
+        }
     }
 
     @Override

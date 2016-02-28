@@ -1,4 +1,4 @@
-package com.petukhovsky.util;
+package com.petukhovsky.jvaluer.util;
 
 import com.petukhovsky.jvaluer.test.TestData;
 

@@ -1,9 +1,12 @@
 package com.petukhovsky.jvaluer.cli;
 
 import com.petukhovsky.jvaluer.Language;
+import com.petukhovsky.jvaluer.checker.TokenChecker;
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
-import com.petukhovsky.jvaluer.run.RunOptions;
+import com.petukhovsky.jvaluer.task.TaskModel;
+import com.petukhovsky.jvaluer.value.Value;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -24,7 +27,8 @@ public class Check implements CommandExecutor {
             return;
         }
 
-        RunOptions runOptions = new RunOptions();
+        String timeLimit = null;
+        String memoryLimit = null;
 
         Language compileLanguage = null;
         boolean needsCompile = false;
@@ -56,12 +60,12 @@ public class Check implements CommandExecutor {
             }
 
             if (arg.startsWith("tl=")) {
-                runOptions = runOptions.append("time_limit", arg.substring("tl=".length()));
+                timeLimit = arg.substring("tl=".length());
                 continue;
             }
 
             if (arg.startsWith("ml=")) {
-                runOptions = runOptions.append("memory_limit", arg.substring("ml=".length()));
+                memoryLimit = arg.substring("ml=".length());
                 continue;
             }
 
@@ -86,7 +90,14 @@ public class Check implements CommandExecutor {
             if (!result.isSuccess()) return;
             exe = result.getExe();
         }
-
+        TaskModel taskModel;
+        try {
+            taskModel = TaskModel.importFromFolder(tests, new TokenChecker(), timeLimit, memoryLimit);
+        } catch (IOException e) {
+            cli.print("problem while importing tests");
+            return;
+        }
+        Value value;
     }
 
     @Override

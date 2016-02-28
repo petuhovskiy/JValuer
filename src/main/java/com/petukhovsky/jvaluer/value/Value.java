@@ -69,4 +69,16 @@ public class Value {
     public boolean isAccepted() {
         return acceptedTestsCount == testsCount;
     }
+
+    public TestVerdict[] getTestVerdicts() {
+        if (verdict != null) return new TestVerdict[]{verdict};
+        TestVerdict[] verdicts = new TestVerdict[testsCount];
+        int it = 0;
+        for (Value value : values) {
+            TestVerdict[] tmp = value.getTestVerdicts();
+            System.arraycopy(tmp, 0, verdicts, it, tmp.length);
+            it += tmp.length;
+        }
+        return verdicts;
+    }
 }

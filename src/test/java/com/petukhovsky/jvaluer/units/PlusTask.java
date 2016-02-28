@@ -8,7 +8,7 @@ import com.petukhovsky.jvaluer.run.RunVerdict;
 import com.petukhovsky.jvaluer.run.Runner;
 import com.petukhovsky.jvaluer.test.PathData;
 import com.petukhovsky.jvaluer.test.StringData;
-import com.petukhovsky.util.AtomScanner;
+import com.petukhovsky.jvaluer.util.AtomScanner;
 import org.junit.Test;
 
 import java.io.IOException;
