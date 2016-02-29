@@ -8,7 +8,8 @@ public enum Command {
     COMPILE("compile", new Compile()),
     MOVE("move", new Move()),
     COPY("copy", new Copy()),
-    CHECK("check", new Check());
+    CHECK("check", new Check()),
+    HELP("help", new Help());
 
     private String name;
     private CommandExecutor executor;

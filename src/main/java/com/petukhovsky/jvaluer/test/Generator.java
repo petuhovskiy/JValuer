@@ -1,7 +1,6 @@
 package com.petukhovsky.jvaluer.test;
 
 import com.petukhovsky.jvaluer.run.RunInfo;
-import com.petukhovsky.jvaluer.run.RunOptions;
 import com.petukhovsky.jvaluer.run.Runner;
 
 import java.io.Closeable;
@@ -18,13 +17,14 @@ public class Generator implements Closeable, AutoCloseable {
 
     public Generator(Path exe) throws IOException {
         this.exe = exe;
-        this.runner = new Runner("stdin", "stdout", new RunOptions("trusted", ""));
+        this.runner = new Runner();
         this.runner.provideExecutable(exe);
     }
 
     public Generator(Path exe, String in, String out) throws IOException {
         this.exe = exe;
-        this.runner = new Runner(in, out, new RunOptions("trusted", ""));
+        this.runner = new Runner();
+        this.runner.setFiles(in, out);
         this.runner.provideExecutable(exe);
     }
 

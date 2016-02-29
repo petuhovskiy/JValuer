@@ -2,15 +2,12 @@ package com.petukhovsky.jvaluer.util;
 
 import com.petukhovsky.jvaluer.test.TestData;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 /**
  * Created by Arthur on 12/19/2015.
  */
-public class AtomScanner {
+public class AtomScanner implements Closeable, AutoCloseable {
 
     final static int BUFFER_SIZE = 65536;
 

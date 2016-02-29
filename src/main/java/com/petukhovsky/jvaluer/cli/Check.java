@@ -1,10 +1,14 @@
 package com.petukhovsky.jvaluer.cli;
 
 import com.petukhovsky.jvaluer.Language;
+import com.petukhovsky.jvaluer.checker.Checker;
 import com.petukhovsky.jvaluer.checker.TokenChecker;
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
-import com.petukhovsky.jvaluer.task.TaskModel;
-import com.petukhovsky.jvaluer.value.Value;
+import com.petukhovsky.jvaluer.run.RunInfo;
+import com.petukhovsky.jvaluer.run.Runner;
+import com.petukhovsky.jvaluer.task.Test;
+import com.petukhovsky.jvaluer.task.Tests;
+import com.petukhovsky.jvaluer.test.TestVerdict;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,14 +25,16 @@ public class Check implements CommandExecutor {
             return;
         }
         Path exe = cli.findPath(args[0]);
-        Path tests = cli.findPath(args[1]);
-        if (exe == null || tests == null || !Files.isDirectory(tests) || Files.notExists(exe)) {
+        Path dir = cli.findPath(args[1]);
+        if (exe == null || dir == null || !Files.isDirectory(dir) || Files.notExists(exe)) {
             cli.print("wrong paths");
             return;
         }
 
         String timeLimit = null;
         String memoryLimit = null;
+
+        Checker checker = new TokenChecker(); //TODO
 
         Language compileLanguage = null;
         boolean needsCompile = false;
@@ -90,14 +96,32 @@ public class Check implements CommandExecutor {
             if (!result.isSuccess()) return;
             exe = result.getExe();
         }
-        TaskModel taskModel;
+        Test[] tests;
         try {
-            taskModel = TaskModel.importFromFolder(tests, new TokenChecker(), timeLimit, memoryLimit);
+            tests = Tests.importFromFolder(dir);
         } catch (IOException e) {
             cli.print("problem while importing tests");
             return;
         }
-        Value value;
+        try (Runner runner = new Runner()) {
+            runner.setFiles(input, output);
+            runner.setLimits(timeLimit, memoryLimit);
+            runner.provideExecutable(exe);
+            if (needsCompile) Files.deleteIfExists(exe);
+            int count = 0;
+            int accepted = 0;
+            for (Test test : tests) {
+                RunInfo info = runner.run(test.getIn());
+                TestVerdict verdict = new TestVerdict(test.getIn(), test.getOut(), runner.getOutput(), info, checker);
+                cli.print(verdict + CLI.ln);
+                count++;
+                if (verdict.isAccepted()) accepted++;
+            }
+            cli.print("Testing complete. Tests passed: " + accepted + "/" + count + CLI.ln);
+        } catch (IOException e) {
+            e.printStackTrace();
+            cli.print("failed to create runner");
+        }
     }
 
     @Override

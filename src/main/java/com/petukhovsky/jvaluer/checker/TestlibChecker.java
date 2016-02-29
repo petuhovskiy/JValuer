@@ -24,7 +24,7 @@ public class TestlibChecker extends Checker implements Closeable, AutoCloseable 
         CompilationResult result = Language.GNU_CPP11.compiler().compile(source);
         if (!result.isSuccess()) throw new IOException("Can't compile checker:\n" + result.getComment());
         this.exe = result.getExe();
-        this.runner = new Runner("stdin", "stderr", new RunOptions("trusted", ""));
+        this.runner = new Runner();
         this.runner.provideExecutable(exe);
     }
 

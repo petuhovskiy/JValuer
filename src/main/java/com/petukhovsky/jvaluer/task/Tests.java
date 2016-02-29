@@ -1,11 +1,6 @@
 package com.petukhovsky.jvaluer.task;
 
-import com.petukhovsky.jvaluer.checker.Checker;
-import com.petukhovsky.jvaluer.run.Runner;
 import com.petukhovsky.jvaluer.test.PathData;
-import com.petukhovsky.jvaluer.test.TestVerdict;
-import com.petukhovsky.jvaluer.util.Callback;
-import com.petukhovsky.jvaluer.value.Value;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,26 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by petuh on 2/24/2016.
+ * Created by petuh on 2/29/2016.
  */
-public class TaskModel {
-    private TestGroup[] tests;
-    private Checker checker = null;
-    private String timeLimit = null;
-    private String memoryLimit = null;
-
-    public TaskModel(TestGroup[] tests) {
-        this.tests = tests;
-    }
-
-    public TaskModel(TestGroup[] tests, Checker checker, String timeLimit, String memoryLimit) {
-        this.tests = tests;
-        this.checker = checker;
-        this.timeLimit = timeLimit;
-        this.memoryLimit = memoryLimit;
-    }
-
-    public static TaskModel importFromFolder(Path folder, Checker checker, String timeLimit, String memoryLimit) throws IOException {
+public class Tests {
+    public static Test[] importFromFolder(Path folder) throws IOException {
         List<Test> list = new ArrayList<>();
         Files.list(folder).forEach(path -> {
             String name = path.getFileName().toString();
@@ -88,11 +67,6 @@ public class TaskModel {
         });
         Test[] tests = new Test[list.size()];
         tests = list.toArray(tests);
-        TestGroup testGroup = new TestGroup(tests);
-        return new TaskModel(new TestGroup[]{testGroup}, checker, timeLimit, memoryLimit);
-    }
-
-    public Value checkAll(Runner runner, Callback<TestVerdict> callback) {
-        //TODO
+        return tests;
     }
 }
