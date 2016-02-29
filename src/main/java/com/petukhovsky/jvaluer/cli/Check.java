@@ -113,7 +113,7 @@ public class Check implements CommandExecutor {
             for (Test test : tests) {
                 RunInfo info = runner.run(test.getIn());
                 TestVerdict verdict = new TestVerdict(test.getIn(), test.getOut(), runner.getOutput(), info, checker);
-                cli.print(verdict + CLI.ln);
+                cli.print(test.getTestName() + " - " + verdict + CLI.ln);
                 count++;
                 if (verdict.isAccepted()) accepted++;
             }
