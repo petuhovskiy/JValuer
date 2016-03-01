@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  */
 public abstract class Compiler {
 
-    private static Logger logger = Logger.getLogger(Compiler.class.getName());
+    protected static Logger logger = Logger.getLogger(Compiler.class.getName());
 
     public abstract CompilationResult compile(Path output, Path source, String... defines);
 

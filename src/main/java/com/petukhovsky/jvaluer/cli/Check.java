@@ -13,6 +13,7 @@ import com.petukhovsky.jvaluer.test.TestVerdict;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 /**
  * Created by petuh on 2/23/2016.
@@ -36,7 +37,7 @@ public class Check implements CommandExecutor {
 
         Checker checker = new TokenChecker(); //TODO
 
-        Language compileLanguage = null;
+        Language language = null;
         boolean needsCompile = false;
 
         String input = "stdin";
@@ -51,7 +52,7 @@ public class Check implements CommandExecutor {
                 if (lang.equals("auto")) {
                     Language tmp = Language.findByPath(exe);
                     if (tmp != null) {
-                        compileLanguage = tmp;
+                        language = tmp;
                         cli.print("autodetected language = " + tmp.getName() + CLI.ln);
                     } else cli.print("autodetection failed" + CLI.ln);
                     continue;
@@ -60,7 +61,7 @@ public class Check implements CommandExecutor {
                 if (tmp == null) cli.print("unknown name: " + lang + CLI.ln);
                 else {
                     cli.print("detected " + tmp.getName() + " language");
-                    compileLanguage = tmp;
+                    language = tmp;
                 }
                 continue;
             }
@@ -85,13 +86,13 @@ public class Check implements CommandExecutor {
                 continue;
             }
         }
-        if (needsCompile && compileLanguage == null) {
+        if (needsCompile && language == null) {
             cli.print("something went wrong");
             return;
         }
         if (needsCompile) {
             cli.print("Compiling..." + CLI.ln);
-            CompilationResult result = compileLanguage.compiler().compile(exe);
+            CompilationResult result = language.compiler().compile(exe);
             cli.print(result + CLI.ln);
             if (!result.isSuccess()) return;
             exe = result.getExe();
@@ -103,9 +104,25 @@ public class Check implements CommandExecutor {
             cli.print("problem while importing tests");
             return;
         }
+        Arrays.sort(tests, (test1, test2) -> {
+            String name1 = test1.getTestName();
+            String name2 = test2.getTestName();
+            for (int i = 0; i < Math.max(name1.length(), name2.length()); i++) {
+                boolean isDigit1 = i < name1.length() && Character.isDigit(name1.charAt(i));
+                boolean isDigit2 = i < name2.length() && Character.isDigit(name2.charAt(i));
+                if (isDigit1 && isDigit2) continue;
+                if (isDigit1) return 1;
+                if (isDigit2) return -1;
+                if (i == Math.min(name1.length(), name2.length())) break;
+                int comp = Character.compare(name1.charAt(i), name2.charAt(i));
+                if (comp != 0) return comp;
+            }
+            return name1.compareTo(name2);
+        });
         try (Runner runner = new Runner()) {
             runner.setFiles(input, output);
             runner.setLimits(timeLimit, memoryLimit);
+            if (language != null) runner.setInvoker(language.invoker());
             runner.provideExecutable(exe);
             if (needsCompile) Files.deleteIfExists(exe);
             int count = 0;

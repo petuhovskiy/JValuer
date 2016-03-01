@@ -1,9 +1,11 @@
 package com.petukhovsky.jvaluer;
 
+import com.petukhovsky.jvaluer.compiler.CloneCompiler;
 import com.petukhovsky.jvaluer.compiler.Compiler;
 import com.petukhovsky.jvaluer.compiler.RunnableCompiler;
 import com.petukhovsky.jvaluer.invoker.DefaultInvoker;
 import com.petukhovsky.jvaluer.invoker.Invoker;
+import com.petukhovsky.jvaluer.invoker.PythonInvoker;
 
 import java.nio.file.Path;
 
@@ -12,7 +14,8 @@ import java.nio.file.Path;
  */
 public enum Language {
     GNU_CPP("GNU C++", new RunnableCompiler("g++", "-static {defines} -lm -s -x c++ -Wl,--stack=268435456 -O2 -o {output} {source}")),
-    GNU_CPP11("GNU C++11", new RunnableCompiler("g++", "-static {defines} -lm -s -x c++ -Wl,--stack=268435456 -O2 -std=c++11 -D__USE_MINGW_ANSI_STDIO=0 -o {output} {source}"));
+    GNU_CPP11("GNU C++11", new RunnableCompiler("g++", "-static {defines} -lm -s -x c++ -Wl,--stack=268435456 -O2 -std=c++11 -D__USE_MINGW_ANSI_STDIO=0 -o {output} {source}")),
+    PYTHON_3("Python 3", new CloneCompiler(), new PythonInvoker(Local.isWindows() ? "c:/Programs/Python-3/python.exe" : "python3"));
 
     private String name;
     private Compiler compiler;
@@ -32,6 +35,8 @@ public enum Language {
         switch (ext) {
             case "cpp":
                 return GNU_CPP11;
+            case "py":
+                return PYTHON_3;
             default:
                 return null;
         }
@@ -62,6 +67,14 @@ public enum Language {
                 return GNU_CPP11;
             case "cpp11":
                 return GNU_CPP11;
+            case "python":
+                return PYTHON_3;
+            case "python3":
+                return PYTHON_3;
+            case "py":
+                return PYTHON_3;
+            case "py3":
+                return PYTHON_3;
             default:
                 return null;
         }
@@ -69,6 +82,10 @@ public enum Language {
 
     public Compiler compiler() {
         return compiler;
+    }
+
+    public Invoker invoker() {
+        return invoker;
     }
 
     public String getName() {
