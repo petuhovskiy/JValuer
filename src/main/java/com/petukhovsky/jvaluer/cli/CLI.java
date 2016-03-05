@@ -1,5 +1,7 @@
 package com.petukhovsky.jvaluer.cli;
 
+import com.petukhovsky.jvaluer.Language;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -92,5 +94,27 @@ public class CLI {
     public Path findPath(String path) {
         if (path.startsWith("$")) return storage.resolve(path.substring(1));
         return Paths.get(path);
+    }
+
+    public Language findLanguage(String lang, Path path) {
+        if (lang.equals("auto")) {
+            Language tmp = Language.findByPath(path);
+            if (tmp != null) {
+                this.print("autodetected language = " + tmp.getName() + CLI.ln);
+                return tmp;
+            } else {
+                this.print("autodetection failed" + CLI.ln);
+                return null;
+            }
+        } else {
+            Language tmp = Language.findByName(lang);
+            if (tmp == null) {
+                this.print("unknown name: " + lang + CLI.ln);
+                return null;
+            } else {
+                this.print("detected " + tmp.getName() + " language");
+                return tmp;
+            }
+        }
     }
 }

@@ -14,7 +14,7 @@ import java.nio.file.Path;
  */
 public enum Language {
     GNU_CPP("GNU C++", new RunnableCompiler("g++", "-static {defines} -lm -s -x c++ -Wl,--stack=268435456 -O2 -o {output} {source}")),
-    GNU_CPP11("GNU C++11", new RunnableCompiler("g++", "-static {defines} -lm -s -x c++ -Wl,--stack=268435456 -O2 -std=c++11 -D__USE_MINGW_ANSI_STDIO=0 -o {output} {source}")),
+    GNU_CPP11("GNU C++11", new RunnableCompiler("g++", Local.isOSX() ? " {defines} -lm -Wl,-stack_size -Wl,0x1000000 -O2 -D__USE_MINGW_ANSI_STDIO=0 -o {output} {source}" : "-static {defines} -lm -s -x c++ -Wl,--stack=268435456 -O2 -std=c++11 -D__USE_MINGW_ANSI_STDIO=0 -o {output} {source}")),
     PYTHON_3("Python 3", new CloneCompiler(), new PythonInvoker(Local.isWindows() ? "c:/Programs/Python-3/python.exe" : "python3"));
 
     private String name;

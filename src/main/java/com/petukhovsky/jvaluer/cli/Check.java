@@ -9,11 +9,13 @@ import com.petukhovsky.jvaluer.run.Runner;
 import com.petukhovsky.jvaluer.task.Test;
 import com.petukhovsky.jvaluer.task.Tests;
 import com.petukhovsky.jvaluer.test.TestVerdict;
+import com.petukhovsky.jvaluer.util.ArgumentParser;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Created by petuh on 2/23/2016.
@@ -32,60 +34,24 @@ public class Check implements CommandExecutor {
             return;
         }
 
-        String timeLimit = null;
-        String memoryLimit = null;
-
         Checker checker = new TokenChecker(); //TODO
 
         Language language = null;
         boolean needsCompile = false;
 
-        String input = "stdin";
-        String output = "stdout";
+        Map<String, String> map = ArgumentParser.parse(args, 2, args.length);
 
-        for (int i = 2; i < args.length; i++) {
-            String arg = args[i];
+        String timeLimit = map.get("tl");
+        String memoryLimit = map.get("ml");
 
-            if (arg.startsWith("compile=")) {
-                needsCompile = true;
-                String lang = arg.substring("compile=".length());
-                if (lang.equals("auto")) {
-                    Language tmp = Language.findByPath(exe);
-                    if (tmp != null) {
-                        language = tmp;
-                        cli.print("autodetected language = " + tmp.getName() + CLI.ln);
-                    } else cli.print("autodetection failed" + CLI.ln);
-                    continue;
-                }
-                Language tmp = Language.findByName(lang);
-                if (tmp == null) cli.print("unknown name: " + lang + CLI.ln);
-                else {
-                    cli.print("detected " + tmp.getName() + " language");
-                    language = tmp;
-                }
-                continue;
-            }
+        String input = map.containsKey("in") ? "stdin" : map.get("in");
+        String output = map.containsKey("out") ? "stdout" : map.get("out");
 
-            if (arg.startsWith("tl=")) {
-                timeLimit = arg.substring("tl=".length());
-                continue;
-            }
-
-            if (arg.startsWith("ml=")) {
-                memoryLimit = arg.substring("ml=".length());
-                continue;
-            }
-
-            if (arg.startsWith("in=")) {
-                input = arg.substring("in=".length());
-                continue;
-            }
-
-            if (arg.startsWith("out=")) {
-                output = arg.substring("out=".length());
-                continue;
-            }
+        if (map.containsKey("compile")) {
+            needsCompile = true;
+            language = cli.findLanguage(map.get("compile"), exe);
         }
+
         if (needsCompile && language == null) {
             cli.print("something went wrong");
             return;
@@ -144,6 +110,6 @@ public class Check implements CommandExecutor {
     @Override
     public void displayHelp(CLI cli) {
         cli.print("Usage: check {source|exe} {tests} args.." + CLI.ln +
-                "Args examples: check a.cpp tests compile={auto|lang} ml=8M tl=5s");
+                "Args examples: check a.cpp tests compile={auto|lang} ml=8M tl=5s in=stdin out=stdout");
     }
 }

@@ -9,7 +9,8 @@ public enum Command {
     MOVE("move", new Move()),
     COPY("copy", new Copy()),
     CHECK("check", new Check()),
-    HELP("help", new Help());
+    HELP("help", new Help()),
+    COMPARE("compare", new Compare());
 
     private String name;
     private CommandExecutor executor;

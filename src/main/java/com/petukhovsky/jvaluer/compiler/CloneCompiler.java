@@ -14,7 +14,7 @@ public class CloneCompiler extends Compiler {
     public CompilationResult compile(Path output, Path source, String... defines) {
         try {
             Files.copy(source, output, StandardCopyOption.REPLACE_EXISTING);
-            return new CompilationResult(output, "All ok", true);
+            return new CompilationResult(output, "", true);
         } catch (IOException e) {
             e.printStackTrace();
             return new CompilationResult(null, "Copy failed", false);
@@ -25,7 +25,7 @@ public class CloneCompiler extends Compiler {
     public CompilationResult compile(Path source, String... defines) {
         Path output = null;
         try {
-            output = Files.createTempFile("", "py");
+            output = Files.createTempFile("", ".tmp");
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Can't create temp file for compile output", e);
         }

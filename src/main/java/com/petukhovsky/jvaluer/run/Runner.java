@@ -117,6 +117,9 @@ public class Runner implements Closeable, AutoCloseable {
     }
 
     public void setFiles(String in, String out) {
+        if (in == null) in = "stdin";
+        if (out == null) out = "stdout";
+
         this.in = folder.resolve(in);
         this.out = folder.resolve(out);
 

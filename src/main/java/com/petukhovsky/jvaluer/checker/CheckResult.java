@@ -31,4 +31,9 @@ public class CheckResult {
     public String getComment() {
         return comment;
     }
+
+    @Override
+    public String toString() {
+        return (isCorrect() ? "ok" : "wa") + " : " + comment;
+    }
 }

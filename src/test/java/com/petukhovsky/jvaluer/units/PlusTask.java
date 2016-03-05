@@ -99,7 +99,7 @@ public class PlusTask {
             CompilationResult result = language.compiler().compile(sourcePath);
             runner.provideExecutable(result.getExe());
             Random random = new Random(1337);
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 20; i++) {
                 int a = random.nextInt(1000000);
                 int b = random.nextInt(1000000);
                 RunInfo info = runner.run(new StringData(a + " " + b));

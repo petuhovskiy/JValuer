@@ -62,4 +62,22 @@ public class RunInfo {
     public String getComment() {
         return comment;
     }
+
+    public String getTimeString() {
+        return getUserTime() + " ms";
+    }
+
+    public String getMemoryString() {
+        int memory = getConsumedMemory();
+        double kb = memory / 1024D;
+        double mb = kb / 1024D;
+        if (mb < 2D) return String.format("%.2fkb", kb);
+        return String.format("%.2fMB", mb);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + this.getTimeString() + ", " + this.getMemoryString() + ") " + this.getComment() +
+                (this.getExitCode() != 0 ? " [exitcode: " + this.getExitCode() + "]" : "");
+    }
 }
