@@ -15,9 +15,5 @@ dependencies {
 }
 
 jar {
-    baseName = 'cli'
-    version = '0.0.1-cli'
-    manifest {
-        attributes 'Main-Class': 'com.petukhovsky.jvaluer.cli.CLI'
-    }
+    baseName = 'jvaluer-lib'
 }

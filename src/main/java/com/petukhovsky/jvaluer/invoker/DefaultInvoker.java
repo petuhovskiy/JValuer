@@ -15,7 +15,7 @@ public class DefaultInvoker implements Invoker {
     private static Invoker invoker;
 
     static {
-        invoker = new NaiveInvoker();
+        invoker = new RunexeInvoker();
     }
 
     @Override
