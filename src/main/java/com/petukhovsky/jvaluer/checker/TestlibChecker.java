@@ -1,7 +1,7 @@
 package com.petukhovsky.jvaluer.checker;
 
-import com.petukhovsky.jvaluer.Language;
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.lang.Language;
 import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.RunOptions;
 import com.petukhovsky.jvaluer.run.Runner;

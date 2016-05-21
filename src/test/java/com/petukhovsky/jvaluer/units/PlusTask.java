@@ -1,13 +1,13 @@
 package com.petukhovsky.jvaluer.units;
 
-import com.petukhovsky.jvaluer.Language;
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.lang.Language;
 import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.RunVerdict;
 import com.petukhovsky.jvaluer.run.Runner;
 import com.petukhovsky.jvaluer.test.PathData;
 import com.petukhovsky.jvaluer.test.StringData;
-import com.petukhovsky.jvaluer.util.AtomScanner;
+import com.petukhovsky.jvaluer.util.FastScanner;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -68,7 +68,7 @@ public class PlusTask {
             assertEquals(info.getRunVerdict(), RunVerdict.SUCCESS);
             PathData data = runner.getOutput();
             assertTrue(data.exists());
-            try (AtomScanner scanner = new AtomScanner(data)) {
+            try (FastScanner scanner = new FastScanner(data)) {
                 assertEquals(13, scanner.nextInt());
             }
         } catch (IOException e) {
@@ -107,7 +107,7 @@ public class PlusTask {
                 assertEquals(info.getRunVerdict(), RunVerdict.SUCCESS);
                 PathData data = runner.getOutput();
                 assertTrue(data.exists());
-                try (AtomScanner scanner = new AtomScanner(data)) {
+                try (FastScanner scanner = new FastScanner(data)) {
                     assertEquals(a + b, scanner.nextInt());
                 }
             }

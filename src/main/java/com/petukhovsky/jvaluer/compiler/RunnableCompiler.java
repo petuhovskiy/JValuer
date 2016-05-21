@@ -22,10 +22,16 @@ public class RunnableCompiler extends Compiler {
 
     private String exe;
     private String pattern;
+    private int timeout;
 
     public RunnableCompiler(String exe, String pattern) {
+        this(exe, pattern, 60);
+    }
+
+    public RunnableCompiler(String exe, String pattern, int timeout) {
         this.exe = exe;
         this.pattern = pattern;
+        this.timeout = timeout;
     }
 
     @Override
@@ -45,7 +51,7 @@ public class RunnableCompiler extends Compiler {
                 .replace("{source}", "\"" + source.toString() + "\"");
         try {
             Process process = Local.execute(cmd);
-            process.waitFor(60, TimeUnit.SECONDS);
+            process.waitFor(timeout, TimeUnit.SECONDS);
             if (process.isAlive()) {
                 process.destroyForcibly();
                 return new CompilationResult(output, "Time limit exceeded", false);

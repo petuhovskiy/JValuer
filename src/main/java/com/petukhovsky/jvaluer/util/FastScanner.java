@@ -7,7 +7,7 @@ import java.io.*;
 /**
  * Created by Arthur on 12/19/2015.
  */
-public class AtomScanner implements Closeable, AutoCloseable {
+public class FastScanner implements Closeable, AutoCloseable {
 
     final static int BUFFER_SIZE = 65536;
 
@@ -17,11 +17,11 @@ public class AtomScanner implements Closeable, AutoCloseable {
     int it = 0;
     boolean end = false;
 
-    public AtomScanner(TestData testData) {
+    public FastScanner(TestData testData) {
         this(testData.openInputStream());
     }
 
-    public AtomScanner(InputStream is) {
+    public FastScanner(InputStream is) {
         br = new BufferedReader(new InputStreamReader(is), BUFFER_SIZE);
     }
 

@@ -20,6 +20,12 @@ public class CheckResult {
         this.isCorrect = result == 1D;
     }
 
+    public CheckResult(boolean isCorrect, double result, String comment) {
+        this.isCorrect = isCorrect;
+        this.result = result;
+        this.comment = comment;
+    }
+
     public boolean isCorrect() {
         return isCorrect;
     }

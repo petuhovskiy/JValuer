@@ -1,5 +1,6 @@
-package com.petukhovsky.jvaluer;
+package com.petukhovsky.jvaluer.lang;
 
+import com.petukhovsky.jvaluer.Local;
 import com.petukhovsky.jvaluer.compiler.CloneCompiler;
 import com.petukhovsky.jvaluer.compiler.Compiler;
 import com.petukhovsky.jvaluer.compiler.RunnableCompiler;
