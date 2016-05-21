@@ -1,5 +1,6 @@
 package com.petukhovsky.jvaluer.lang;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,13 @@ public class Languages {
 
     public Language findByName(String name) {
         return names.get(name);
+    }
+
+    public Language findByPath(Path path) {
+        String name = path.getFileName().toString();
+        int pos = name.lastIndexOf('.');
+        if (pos == -1) return null;
+        return findByExtension(name.substring(pos + 1));
     }
 
     public List<Language> getAll() {

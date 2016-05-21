@@ -53,11 +53,7 @@ public class TestVerdict {
     }
 
     public String getMemory() {
-        int memory = info.getConsumedMemory();
-        double kb = memory / 1024D;
-        double mb = kb / 1024D;
-        if (mb < 2D) return String.format("%.2fkb", kb);
-        return String.format("%.2fMB", mb);
+        return info.getMemoryString();
     }
 
     public String getRunComment() {

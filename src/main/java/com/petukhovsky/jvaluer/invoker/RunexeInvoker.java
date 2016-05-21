@@ -1,9 +1,11 @@
 package com.petukhovsky.jvaluer.invoker;
 
-import com.petukhovsky.jvaluer.Local;
+import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.RunOptions;
 import com.petukhovsky.jvaluer.run.RunVerdict;
+import com.petukhovsky.jvaluer.util.Local;
+import com.petukhovsky.jvaluer.util.OS;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -22,7 +24,6 @@ public class RunexeInvoker implements Invoker {
 
     private static Logger logger = Logger.getLogger(RunexeInvoker.class.getName());
 
-    private static Path runexe = Local.getRunExe();
     private static DocumentBuilderFactory factory;
     private static DocumentBuilder builder;
 
@@ -36,6 +37,14 @@ public class RunexeInvoker implements Invoker {
         logger.fine("Runexe invoker dom builder static init complete");
     }
 
+    private Path runexe;
+    private JValuer jValuer;
+
+    public RunexeInvoker(JValuer jValuer) {
+        this.jValuer = jValuer;
+        this.runexe = jValuer.getRunexe();
+    }
+
     @Override
     public RunInfo run(RunOptions options) {
         try {
@@ -45,7 +54,7 @@ public class RunexeInvoker implements Invoker {
             if (options.hasParameter("stdin")) cmd += " -i \"" + options.getParameter("stdin") + "\"";
             if (options.hasParameter("stdout")) cmd += " -o \"" + options.getParameter("stdout") + "\"";
             if (options.hasParameter("stderr")) cmd += " -e \"" + options.getParameter("stderr") + "\"";
-            if (Local.isWindows()/* && options.hasParameter("trusted")*/) cmd += " -z"; //TODO
+            if (OS.isWindows()/* && options.hasParameter("trusted")*/) cmd += " -z"; //TODO
             if (options.hasParameter("login")) cmd += " -l " + options.getParameter("login");
             if (options.hasParameter("password")) cmd += " -p " + options.getParameter("password");
             if (options.hasParameter("memory_limit")) cmd += " -m " + options.getParameter("memory_limit");

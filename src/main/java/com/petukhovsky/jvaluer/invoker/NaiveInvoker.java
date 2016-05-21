@@ -1,9 +1,9 @@
 package com.petukhovsky.jvaluer.invoker;
 
-import com.petukhovsky.jvaluer.Local;
 import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.RunOptions;
 import com.petukhovsky.jvaluer.run.RunVerdict;
+import com.petukhovsky.jvaluer.util.OS;
 import com.petukhovsky.jvaluer.util.PidUtils;
 
 import java.io.File;
@@ -60,7 +60,7 @@ public class NaiveInvoker implements Invoker {
                     ", " + (timeLimit == 0 ? "no time limit" : timeLimit + " ms") + ". " + options.getParameter("executable"));
 
 
-            ProcessBuilder builder = new ProcessBuilder(Local.isWindows() ? new String[]{options.getParameter("executable"), args}
+            ProcessBuilder builder = new ProcessBuilder(OS.isWindows() ? new String[]{options.getParameter("executable"), args}
                     : new String[]{"bash", "-c", options.getParameter("executable"), args});
 
             logger.info("creating process = " + options.getParameter("executable") + " " + args);

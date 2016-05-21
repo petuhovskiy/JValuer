@@ -1,6 +1,6 @@
 package com.petukhovsky.jvaluer.compiler;
 
-import com.petukhovsky.jvaluer.Local;
+import com.petukhovsky.jvaluer.util.Local;
 
 import java.io.BufferedReader;
 import java.io.IOException;

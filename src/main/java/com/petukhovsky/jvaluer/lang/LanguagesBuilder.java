@@ -25,10 +25,11 @@ public class LanguagesBuilder {
     }
 
     public LanguagesBuilder addLanguage(Language language, String[] ext, String[] name) {
-        for (String s : ext) if (exts.containsKey(s)) throw new RuntimeException("Extension duplicate");
-        for (String s : name) if (names.containsKey(s)) throw new RuntimeException("Name duplicate");
-        for (String s : ext) exts.put(s, language);
-        for (String s : name) names.put(s, language);
+        if (ext != null)
+            for (String s : ext) if (exts.containsKey(s)) throw new RuntimeException("Extension duplicate");
+        if (name != null) for (String s : name) if (names.containsKey(s)) throw new RuntimeException("Name duplicate");
+        if (ext != null) for (String s : ext) exts.put(s, language);
+        if (name != null) for (String s : name) names.put(s, language);
         list.add(language);
         return this;
     }

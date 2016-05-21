@@ -1,9 +1,9 @@
 package com.petukhovsky.jvaluer.checker;
 
+import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.lang.Language;
 import com.petukhovsky.jvaluer.run.RunInfo;
-import com.petukhovsky.jvaluer.run.RunOptions;
 import com.petukhovsky.jvaluer.run.Runner;
 import com.petukhovsky.jvaluer.test.StringData;
 import com.petukhovsky.jvaluer.test.TestData;
@@ -15,21 +15,28 @@ import java.nio.file.Path;
 /**
  * Created by Arthur on 12/26/2015.
  */
-public class TestlibChecker extends Checker implements Closeable, AutoCloseable {
+public class RunnableChecker extends Checker implements Closeable, AutoCloseable {
 
     private Path exe;
     private Runner runner;
 
-    public TestlibChecker(Path source, RunOptions options, Language language) throws IOException {
-        CompilationResult result = Language.GNU_CPP11.compiler().compile(source);
-        if (!result.isSuccess()) throw new IOException("Can't compile checker:\n" + result.getComment());
+    private JValuer jValuer;
+
+    private RunnableChecker(JValuer jValuer, Path source, Runner runner, Language language) {
+        this.jValuer = jValuer;
+        CompilationResult result = jValuer.compile(language, source);
+        if (!result.isSuccess()) throw new RuntimeException("Can't compile checker:\n" + result.getComment());
         this.exe = result.getExe();
-        this.runner = new Runner();
+        this.runner = runner;
         this.runner.provideExecutable(exe);
     }
 
-    public TestlibChecker(Path source) throws IOException {
-        this(source, new RunOptions("trusted", "").append("time_limit", "10s").append("memory_limit", "512M"), Language.findByPath(source));
+    public RunnableChecker(JValuer jValuer, Path source, Language language) {
+        this(jValuer, source, jValuer.createRunner().setTimeLimit("10s").setMemoryLimit("512M").build(), language);
+    }
+
+    public RunnableChecker(JValuer jValuer, Path source) {
+        this(jValuer, source, jValuer.getLanguages().findByPath(source));
     }
 
     @Override

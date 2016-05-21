@@ -1,10 +1,10 @@
 package com.petukhovsky.jvaluer.run;
 
-import com.petukhovsky.jvaluer.Local;
-import com.petukhovsky.jvaluer.invoker.DefaultInvoker;
+import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.invoker.Invoker;
 import com.petukhovsky.jvaluer.test.PathData;
 import com.petukhovsky.jvaluer.test.TestData;
+import com.petukhovsky.jvaluer.util.FilesUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -30,20 +30,25 @@ public class Runner implements Closeable, AutoCloseable {
     private Invoker invoker;
     private RunOptions options;
 
-    Runner(Path folder) {
+    Runner(JValuer jValuer, Path folder, RunOptions options, Invoker invoker, String in, String out) {
         logger.fine("Creating runner with folder=" + folder + ", in=" + in + ", out=" + out);
         this.folder = folder;
-        this.executable = folder.resolve("solution" + Local.getExecutableSuffix());
-        this.invoker = new DefaultInvoker();
-        this.options = new RunOptions("folder", folder.toAbsolutePath().toString())
-                .append("executable", executable.toString());
-        setFiles("stdin", "stdout");
-    }
+        this.executable = folder.resolve("solution" + jValuer.executableSuffix);
+        this.invoker = invoker;
+        this.options = options.append("executable", executable.toString());
 
-    public Runner() throws IOException {
-        this(Files.createTempDirectory(""));
-        this.folder.toFile().deleteOnExit();
-        this.executable.toFile().deleteOnExit();
+        this.in = folder.resolve(in);
+        this.out = folder.resolve(out);
+
+        if (in.equals("stdin")) this.options = this.options.append("stdin", this.in.toString());
+        switch (out) {
+            case "stdout":
+                this.options = this.options.append("stdout", this.out.toString());
+                break;
+            case "stderr":
+                this.options = this.options.append("stderr", this.out.toString());
+                break;
+        }
     }
 
     private void clear(Path path, String... values) throws IOException {
@@ -112,50 +117,9 @@ public class Runner implements Closeable, AutoCloseable {
         return new PathData(out);
     }
 
-    public void setInvoker(Invoker invoker) {
-        this.invoker = invoker;
-    }
-
-    public void setFiles(String in, String out) {
-        if (in == null) in = "stdin";
-        if (out == null) out = "stdout";
-
-        this.in = folder.resolve(in);
-        this.out = folder.resolve(out);
-
-        this.options = this.options.remove("stdin")
-                .remove("stderr")
-                .remove("stdout");
-
-        if (in.equals("stdin")) this.options = this.options.append("stdin", this.in.toString());
-        switch (out) {
-            case "stdout":
-                this.options = this.options.append("stdout", this.out.toString());
-                break;
-            case "stderr":
-                this.options = this.options.append("stderr", this.out.toString());
-                break;
-        }
-    }
-
-    public void setLimits(String timeLimit, String memoryLimit) {
-        this.options = this.options.remove("time_limit")
-                .remove("memory_limit");
-        if (timeLimit != null) this.options = this.options.append("time_limit", timeLimit);
-        if (memoryLimit != null) this.options = this.options.append("memory_limit", memoryLimit);
-    }
-
-    public void setTrusted(boolean trusted) {
-        if (trusted) {
-            this.options = this.options.append("trusted", "");
-        } else {
-            this.options = this.options.remove("trusted");
-        }
-    }
-
     @Override
     public void close() throws IOException {
-        clear();
-        Files.deleteIfExists(folder);
+        FilesUtils.clearFolder(folder);
+        Files.delete(folder);
     }
 }
