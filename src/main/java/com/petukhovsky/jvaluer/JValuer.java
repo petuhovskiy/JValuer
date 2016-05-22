@@ -2,8 +2,13 @@ package com.petukhovsky.jvaluer;
 
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.compiler.Compiler;
+import com.petukhovsky.jvaluer.invoker.Invoker;
+import com.petukhovsky.jvaluer.invoker.NaiveInvoker;
+import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
 import com.petukhovsky.jvaluer.lang.Language;
 import com.petukhovsky.jvaluer.lang.Languages;
+import com.petukhovsky.jvaluer.run.RunInfo;
+import com.petukhovsky.jvaluer.run.RunOptions;
 import com.petukhovsky.jvaluer.run.RunnerBuilder;
 import com.petukhovsky.jvaluer.test.Generator;
 import com.petukhovsky.jvaluer.util.FilesUtils;
@@ -33,6 +38,8 @@ public class JValuer {
 
     private Path runexe;
 
+    private Invoker defaultInvoker;
+
     public JValuer(Languages languages, Path path) {
         this.languages = languages;
         this.path = path;
@@ -46,15 +53,26 @@ public class JValuer {
             e.printStackTrace();
         }
         loadResources();
+        loadInvoker();
+    }
+
+    private void loadInvoker() {
+        defaultInvoker = new OSRelatedValue<Invoker>().windows(new RunexeInvoker()).value().orElse(new NaiveInvoker());
     }
 
     private void loadResources() {
-        this.runexe = Local.loadResource("/runexe"
+        this.runexe = loadResource("runexe" + executableSuffix, "/runexe"
                 + new OSRelatedValue<String>()
                 .windows(".exe")
                 .unix("_linux")
                 .osx("_osx").value().get());
         Local.setExecutable(this.runexe);
+    }
+
+    public Path loadResource(String name, String resource) {
+        Path path = resources.resolve(name);
+        Local.loadResource(path, resource);
+        return path;
     }
 
     public void clearTemp() {
@@ -93,6 +111,12 @@ public class JValuer {
         return compiler.compile(createTempExe(), source, defines);
     }
 
+    public CompilationResult compile(Path source, String... defines) {
+        Language language = languages.findByPath(source);
+        if (language == null) throw new RuntimeException("Can't determine language");
+        return compile(language, source, defines);
+    }
+
     public RunnerBuilder createRunner() {
         return new RunnerBuilder(createTempDir(), this);
     }
@@ -107,5 +131,13 @@ public class JValuer {
 
     public Generator createGenerator(Path exe) {
         return new Generator(exe, this);
+    }
+
+    public RunInfo invokeDefault(RunOptions options) {
+        return invoke(defaultInvoker, options);
+    }
+
+    public RunInfo invoke(Invoker invoker, RunOptions options) {
+        return invoker.run(this, options);
     }
 }

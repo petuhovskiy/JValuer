@@ -18,11 +18,9 @@ public class Local {
 
     private static Logger logger = Logger.getLogger(Local.class.getName());
 
-    public static Path loadResource(String name) {
+    public static Path loadResource(Path path, String name) {
         logger.fine("loading resource " + name);
         try {
-            Path path = Files.createTempFile("", name.startsWith("/") ? name.substring(1) : name);
-            path.toFile().deleteOnExit();
             try (InputStream is = Local.class.getResourceAsStream(name)) {
                 Files.copy(is, path, StandardCopyOption.REPLACE_EXISTING);
             }

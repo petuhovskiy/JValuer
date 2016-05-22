@@ -1,23 +1,29 @@
 package com.petukhovsky.jvaluer.units;
 
+import com.petukhovsky.jvaluer.JValuer;
+import com.petukhovsky.jvaluer.JValuerBuilder;
 import com.petukhovsky.jvaluer.compiler.CloneCompiler;
 import com.petukhovsky.jvaluer.compiler.RunnableCompiler;
 import com.petukhovsky.jvaluer.invoker.PythonInvoker;
 import com.petukhovsky.jvaluer.lang.Language;
 import com.petukhovsky.jvaluer.lang.Languages;
-import com.petukhovsky.jvaluer.lang.LanguagesBuilder;
 import com.petukhovsky.jvaluer.util.OSRelatedValue;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by Arthur Petukhovsky on 5/21/2016.
+ * Created by Arthur Petukhovsky on 5/22/2016.
  */
-public class LanguagesTest {
+public class JValuerTest {
+    private JValuer jValuer;
 
-    public Languages languages() {
-        return new LanguagesBuilder()
+    public JValuer loadJValuer() {
+        return new JValuerBuilder()
                 .addLanguage(new Language("GNU C++", new RunnableCompiler("g++", "{defines} -O2 -o {output} {source}")),
                         new String[]{}, new String[]{"c++", "cpp"})
                 .addLanguage(new Language("GNU C++11", new RunnableCompiler("g++", "{defines} -O2 -o {output} {source}")),
@@ -25,13 +31,24 @@ public class LanguagesTest {
                 .addLanguage(new Language("Python 3", new CloneCompiler(),
                                 new PythonInvoker(new OSRelatedValue<String>().windows("c:/Programs/Python-3/python.exe").value().orElse("python3"))),
                         new String[]{"py"}, new String[]{"python", "py", "python3"})
+                .setPath(Paths.get("jvaluer-storage"))
                 .build();
     }
 
+    @Before
+    public void before() {
+        this.jValuer = loadJValuer();
+    }
+
     @Test
-    public void test() {
-        Languages languages = languages();
+    public void testLanguages() {
+        Languages languages = loadJValuer().getLanguages();
         assertEquals(languages.findByExtension("py").name(), "Python 3");
         assertEquals(languages.findByName("c++11").name(), "GNU C++11");
+    }
+
+    @After
+    public void after() {
+        jValuer.clearTemp();
     }
 }

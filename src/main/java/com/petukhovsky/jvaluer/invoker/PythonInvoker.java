@@ -1,5 +1,6 @@
 package com.petukhovsky.jvaluer.invoker;
 
+import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.RunOptions;
 
@@ -17,12 +18,12 @@ public class PythonInvoker implements Invoker {
     }
 
     @Override
-    public RunInfo run(RunOptions options) {
+    public RunInfo run(JValuer jValuer, RunOptions options) {
         String args = "";
         if (options.hasParameter("args")) args = options.getParameter("args");
         String executable = options.getParameter("executable");
         options = options.append("args", executable + " " + args)
                 .append("executable", python);
-        return invoker.run(options);
+        return invoker.run(jValuer, options);
     }
 }

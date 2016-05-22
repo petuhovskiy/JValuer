@@ -37,16 +37,13 @@ public class RunexeInvoker implements Invoker {
         logger.fine("Runexe invoker dom builder static init complete");
     }
 
-    private Path runexe;
-    private JValuer jValuer;
 
-    public RunexeInvoker(JValuer jValuer) {
-        this.jValuer = jValuer;
-        this.runexe = jValuer.getRunexe();
+    public RunexeInvoker() {
     }
 
     @Override
-    public RunInfo run(RunOptions options) {
+    public RunInfo run(JValuer jValuer, RunOptions options) {
+        Path runexe = jValuer.getRunexe();
         try {
             String cmd = String.format("%s -xml", runexe);
 

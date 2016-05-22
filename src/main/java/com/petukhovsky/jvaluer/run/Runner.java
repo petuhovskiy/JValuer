@@ -30,12 +30,16 @@ public class Runner implements Closeable, AutoCloseable {
     private Invoker invoker;
     private RunOptions options;
 
+    private JValuer jValuer;
+
     Runner(JValuer jValuer, Path folder, RunOptions options, Invoker invoker, String in, String out) {
         logger.fine("Creating runner with folder=" + folder + ", in=" + in + ", out=" + out);
         this.folder = folder;
         this.executable = folder.resolve("solution" + jValuer.executableSuffix);
         this.invoker = invoker;
         this.options = options.append("executable", executable.toString());
+
+        this.jValuer = jValuer;
 
         this.in = folder.resolve(in);
         this.out = folder.resolve(out);
@@ -95,7 +99,7 @@ public class Runner implements Closeable, AutoCloseable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return invoker.run(args.length > 0 ? options.append("args", String.join(" ", args)) : options);
+        return jValuer.invoke(invoker, args.length > 0 ? options.append("args", String.join(" ", args)) : options);
     }
 
     public RunInfo run(TestData testData, String... args) {

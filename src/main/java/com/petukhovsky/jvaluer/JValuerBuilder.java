@@ -24,7 +24,7 @@ public class JValuerBuilder {
     }
 
     public JValuerBuilder setPath(Path path) {
-        this.path = path;
+        this.path = path.toAbsolutePath();
         return this;
     }
 

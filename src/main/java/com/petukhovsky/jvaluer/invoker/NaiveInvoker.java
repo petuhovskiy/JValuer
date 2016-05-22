@@ -1,5 +1,6 @@
 package com.petukhovsky.jvaluer.invoker;
 
+import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.RunOptions;
 import com.petukhovsky.jvaluer.run.RunVerdict;
@@ -20,7 +21,7 @@ public class NaiveInvoker implements Invoker {
     private static final Logger logger = Logger.getLogger(NaiveInvoker.class.getName());
 
     @Override
-    public RunInfo run(RunOptions options) {
+    public RunInfo run(JValuer jValuer, RunOptions options) {
         try {
             int memoryLimit = 0;
             int timeLimit = 0;

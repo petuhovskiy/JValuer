@@ -1,5 +1,6 @@
 package com.petukhovsky.jvaluer.invoker;
 
+import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.RunOptions;
 
@@ -12,14 +13,8 @@ public class DefaultInvoker implements Invoker {
 
     private static Logger logger = Logger.getLogger(DefaultInvoker.class.getName());
 
-    private static Invoker invoker;
-
-    static {
-        invoker = new RunexeInvoker();
-    }
-
     @Override
-    public RunInfo run(RunOptions options) {
-        return invoker.run(options);
+    public RunInfo run(JValuer jValuer, RunOptions options) {
+        return jValuer.invokeDefault(options);
     }
 }
