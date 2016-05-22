@@ -51,7 +51,7 @@ public class RunexeInvoker implements Invoker {
             if (options.hasParameter("stdin")) cmd += " -i \"" + options.getParameter("stdin") + "\"";
             if (options.hasParameter("stdout")) cmd += " -o \"" + options.getParameter("stdout") + "\"";
             if (options.hasParameter("stderr")) cmd += " -e \"" + options.getParameter("stderr") + "\"";
-            if (OS.isWindows()/* && options.hasParameter("trusted")*/) cmd += " -z"; //TODO
+            if (OS.isWindows() && options.hasParameter("trusted")) cmd += " -z";
             if (options.hasParameter("login")) cmd += " -l " + options.getParameter("login");
             if (options.hasParameter("password")) cmd += " -p " + options.getParameter("password");
             if (options.hasParameter("memory_limit")) cmd += " -m " + options.getParameter("memory_limit");

@@ -2,6 +2,7 @@ package com.petukhovsky.jvaluer.units;
 
 import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.Runner;
 import com.petukhovsky.jvaluer.test.StringData;
 import com.petukhovsky.jvaluer.util.OSRelatedValue;
@@ -40,16 +41,22 @@ public class PlusTask {
             System.err.println("Runexe test skip");
             return;
         }
-        try (Runner runner = jValuer.createRunner().setIn("input.txt").setOut("output.txt").build()) {
+        try (Runner runner = jValuer.createRunner().setIn("input.txt")
+                .setOut("output.txt")
+                .addOption("login", "invoker")
+                .addOption("password", "password")
+                .build()) {
             runner.provideExecutable(exe);
             Random random = new Random();
             for (int i = 0; i < 20; i++) {
                 int a = random.nextInt(100500);
                 int b = random.nextInt(100500);
                 int result = a + b;
-                runner.run(new StringData(a + " " + b));
+                RunInfo info = runner.run(new StringData(a + " " + b));
                 assertEquals(runner.getOutput().getString(), result + "");
+                System.err.println(info);
             }
+
         }
     }
 }

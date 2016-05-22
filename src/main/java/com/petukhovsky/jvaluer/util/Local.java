@@ -59,12 +59,14 @@ public class Local {
                 setExecutableOld(executable);
             }
         } else if (new OSRelatedValue<Boolean>().windows(true).value().orElse(false)) {
+            setExecutableOld(executable);
+            /* TODO use this
             try {
                 setExecutableWindows(executable);
             } catch (IOException e) {
                 logger.log(Level.WARNING, "windows permissions", e);
                 setExecutableOld(executable);
-            }
+            }*/
         } else {
             setExecutableOld(executable);
         }
