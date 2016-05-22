@@ -41,10 +41,9 @@ public class PlusTask {
             System.err.println("Runexe test skip");
             return;
         }
-        try (Runner runner = jValuer.createRunner().setIn("input.txt")
+        try (Runner runner = jValuer.createRunner()
+                .setIn("input.txt")
                 .setOut("output.txt")
-                .addOption("login", "invoker")
-                .addOption("password", "password")
                 .build()) {
             runner.provideExecutable(exe);
             Random random = new Random();
