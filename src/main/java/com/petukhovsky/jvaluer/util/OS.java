@@ -16,4 +16,13 @@ public class OS {
     public static boolean isOSX() {
         return System.getProperty("os.name").contains("OS X");
     }
+
+    public static boolean is64Bit() {
+        if (System.getProperty("os.name").contains("Windows")) {
+            return (System.getenv("ProgramFiles(x86)") != null);
+        }
+        else {
+            return (System.getProperty("os.arch").contains("64"));
+        }
+    }
 }

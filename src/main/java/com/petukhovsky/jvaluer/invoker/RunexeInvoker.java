@@ -43,7 +43,7 @@ public class RunexeInvoker implements Invoker {
 
     @Override
     public RunInfo run(JValuer jValuer, RunOptions options) {
-        Path runexe = jValuer.getRunexe();
+        Path runexe = jValuer.getRunexe1();
         try {
             String cmd = String.format("%s -xml", runexe);
 
@@ -78,5 +78,9 @@ public class RunexeInvoker implements Invoker {
             logger.log(Level.SEVERE, "run is crashed", e);
             return RunInfo.crashed("Crashed while invoking");
         }
+    }
+
+    public boolean isSupported(JValuer jValuer) {
+        return jValuer.getRunexe1() != null;
     }
 }

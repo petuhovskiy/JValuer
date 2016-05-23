@@ -16,15 +16,13 @@ import java.nio.file.Path;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by petuh on 2/2/2016.
+ * Created by Arthur Petukhovsky on 5/23/2016.
  */
-public class PlusTask {
-
-    private static final Logger logger = Logger.getLogger(PlusTask.class.getName());
+public class TLTask {
+    private static final Logger logger = Logger.getLogger(TLTask.class.getName());
 
     private JValuer jValuer;
 
@@ -34,53 +32,52 @@ public class PlusTask {
     @Before
     public void loadResources() {
         this.jValuer = new JValuerTest().loadJValuer();
-        this.source = jValuer.loadResource("plus.cpp", "/plustxt.cpp");
+        this.source = jValuer.loadResource("tl.cpp", "/tl.cpp");
         CompilationResult result = jValuer.compile(source);
         logger.info(result + "");
         assertTrue(result.isSuccess());
         exe = result.getExe();
     }
 
-    @Test(timeout = 20000)
+    @Test
     public void testRunexe() throws IOException {
         RunexeInvoker invoker = new RunexeInvoker();
         if (!invoker.isSupported(jValuer)) {
-            logger.info("Runexe plustask test skip");
+            logger.info("Runexe tl test skip");
             return;
         }
         try (Runner runner = jValuer.createRunner()
-                .setIn("input.txt")
-                .setOut("output.txt")
+                .setTimeLimit("1000ms")
                 .setTrusted()
                 .setInvoker(invoker)
                 .build()) {
             runner.provideExecutable(exe);
-            tests20(runner);
+            tests(runner);
         }
     }
 
-    @Test(timeout = 20000)
+    @Test
     public void testNaive() throws IOException {
         try (Runner runner = jValuer.createRunner()
-                .setIn("input.txt")
-                .setOut("output.txt")
+                .setTimeLimit("1000ms")
                 .setInvoker(new NaiveInvoker())
                 .build()) {
             runner.provideExecutable(exe);
-            tests20(runner);
+            tests(runner);
         }
     }
 
-    private void tests20(Runner runner) {
+    private void tests(Runner runner) {
         Random random = new Random();
-        for (int i = 0; i < 10; i++) {
-            int a = random.nextInt(100500);
-            int b = random.nextInt(100500);
-            int result = a + b;
-            RunInfo info = runner.run(new StringData(a + " " + b));
+        for (int i = 0; i < 2; i++) {
+            int a = random.nextInt(100);
+            RunInfo info = runner.run(new StringData(a + ""));
             assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
-            assertEquals(runner.getOutput().getString(), result + "");
+        }
+        for (int i = 0; i < 2; i++) {
+            long a = 123456789123456L + random.nextInt(100);
+            RunInfo info = runner.run(new StringData(a + ""));
+            assertTrue(info.getRunVerdict() == RunVerdict.TIME_LIMIT_EXCEEDED);
         }
     }
-
 }

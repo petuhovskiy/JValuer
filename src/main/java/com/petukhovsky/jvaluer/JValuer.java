@@ -36,7 +36,7 @@ public class JValuer {
     private Path temp;
     private Path resources;
 
-    private Path runexe;
+    private Path runexe1;
 
     private Invoker defaultInvoker;
 
@@ -57,16 +57,19 @@ public class JValuer {
     }
 
     private void loadInvoker() {
-        defaultInvoker = new OSRelatedValue<Invoker>().windows(new RunexeInvoker()).value().orElse(new NaiveInvoker());
+        defaultInvoker = new OSRelatedValue<Invoker>()
+                .windows(new RunexeInvoker())
+                .unix(new RunexeInvoker())
+                .value().orElse(new NaiveInvoker());
     }
 
     private void loadResources() {
-        this.runexe = loadResource("runexe" + executableSuffix, "/runexe"
-                + new OSRelatedValue<String>()
-                .windows(".exe")
-                .unix("_linux")
-                .osx("_osx").value().get());
-        Local.setExecutable(this.runexe);
+        this.runexe1 = new OSRelatedValue<Path>()
+                .windows(loadResource("runexe1.exe", "/runexe.exe"))
+                .unix(loadResource("runexe1", "/runexe_linux"))
+                .value().orElse(null);
+        if (this.runexe1 != null) Local.chmod777(this.runexe1);
+
     }
 
     public Path loadResource(String name, String resource) {
@@ -90,7 +93,7 @@ public class JValuer {
 
     public Path createTempExe() {
         Path exe = createTempFile("runnable", executableSuffix);
-        Local.setExecutable(exe);
+        Local.chmod777(exe);
         return exe;
     }
 
@@ -125,8 +128,8 @@ public class JValuer {
         return languages;
     }
 
-    public Path getRunexe() {
-        return runexe;
+    public Path getRunexe1() {
+        return runexe1;
     }
 
     public Generator createGenerator(Path exe) {

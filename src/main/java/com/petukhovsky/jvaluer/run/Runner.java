@@ -5,6 +5,7 @@ import com.petukhovsky.jvaluer.invoker.Invoker;
 import com.petukhovsky.jvaluer.test.PathData;
 import com.petukhovsky.jvaluer.test.TestData;
 import com.petukhovsky.jvaluer.util.FilesUtils;
+import com.petukhovsky.jvaluer.util.Local;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -85,7 +86,7 @@ public class Runner implements Closeable, AutoCloseable {
         try {
             clear();
             Files.copy(path, executable);
-            logger.finer("Set executable file in runner = " + this.executable.toFile().setExecutable(true, false));
+            Local.chmod777(this.executable);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -94,8 +95,8 @@ public class Runner implements Closeable, AutoCloseable {
     private RunInfo run(String... args) {
         try {
             Files.createFile(out);
-            logger.finer("Set readable file in runner = " + this.in.toFile().setReadable(true, false));
-            logger.finer("Set writable file in runner = " + this.out.toFile().setWritable(true, false));
+            Local.chmod777(this.in);
+            Local.chmod777(this.out);
         } catch (IOException e) {
             e.printStackTrace();
         }

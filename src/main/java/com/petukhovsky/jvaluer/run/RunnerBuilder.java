@@ -56,6 +56,11 @@ public class RunnerBuilder {
         return addOption("trusted", "");
     }
 
+    public RunnerBuilder setInvoker(Invoker invoker) {
+        this.invoker = invoker;
+        return this;
+    }
+
     public Runner build() {
         return new Runner(jValuer, dir, options, invoker, in, out);
     }

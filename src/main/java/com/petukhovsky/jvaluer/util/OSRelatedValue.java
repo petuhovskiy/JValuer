@@ -18,6 +18,16 @@ public class OSRelatedValue<T> {
         return this;
     }
 
+    public OSRelatedValue<T> windows32(T value) {
+        if (OS.isWindows() && !OS.is64Bit()) this.value = Optional.of(value);
+        return this;
+    }
+
+    public OSRelatedValue<T> windows64(T value) {
+        if (OS.isWindows() && OS.is64Bit()) this.value = Optional.of(value);
+        return this;
+    }
+
     public OSRelatedValue<T> unix(T value) {
         if (OS.isUnix()) this.value = Optional.of(value);
         return this;

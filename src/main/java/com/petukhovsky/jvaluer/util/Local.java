@@ -19,15 +19,14 @@ public class Local {
     private static Logger logger = Logger.getLogger(Local.class.getName());
 
     public static Path loadResource(Path path, String name) {
-        logger.fine("loading resource " + name);
         try {
             try (InputStream is = Local.class.getResourceAsStream(name)) {
                 Files.copy(is, path, StandardCopyOption.REPLACE_EXISTING);
             }
-            logger.fine("resource " + name + " was loaded");
+            logger.info("resource " + name + " was loaded");
             return path;
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "resource loading failed", e);
+            logger.log(Level.SEVERE, "resource " + name + " loading failed", e);
         }
         return null;
     }
@@ -50,16 +49,16 @@ public class Local {
         }
     }
 
-    public static void setExecutable(Path executable) {
+    public static void chmod777(Path executable) {
         if (new OSRelatedValue<Boolean>().osx(true).unix(true).value().orElse(false)) {
             try {
-                setExecutableUnix(executable);
+                chmod777Unix(executable);
             } catch (IOException e) {
                 logger.log(Level.WARNING, "posix permissions", e);
-                setExecutableOld(executable);
+                chmod777Old(executable);
             }
         } else if (new OSRelatedValue<Boolean>().windows(true).value().orElse(false)) {
-            setExecutableOld(executable);
+            chmod777Old(executable);
             /* TODO use this
             try {
                 setExecutableWindows(executable);
@@ -68,18 +67,18 @@ public class Local {
                 setExecutableOld(executable);
             }*/
         } else {
-            setExecutableOld(executable);
+            chmod777Old(executable);
         }
     }
 
-    public static void setExecutableOld(Path executable) {
+    public static void chmod777Old(Path executable) {
         File file = executable.toFile();
         file.setExecutable(true, false);
         file.setReadable(true, false);
         file.setWritable(true, false);
     }
 
-    public static void setExecutableWindows(Path executable) throws IOException {
+    public static void chmod777Windows(Path executable) throws IOException {
         AclFileAttributeView aclAttr = Files.getFileAttributeView(executable, AclFileAttributeView.class);
 
         UserPrincipalLookupService upls = executable.getFileSystem().getUserPrincipalLookupService();
@@ -94,7 +93,7 @@ public class Local {
         aclAttr.setAcl(Collections.singletonList(builder.build()));
     }
 
-    public static void setExecutableUnix(Path executable) throws IOException {
+    public static void chmod777Unix(Path executable) throws IOException {
         Set<PosixFilePermission> perms = new HashSet<>();
         //add owners permission
         perms.add(PosixFilePermission.OWNER_READ);

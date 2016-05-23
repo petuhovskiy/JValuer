@@ -45,10 +45,10 @@ public class NaiveInvoker implements Invoker {
                     timeLimit = (int) Double.parseDouble(tl.substring(0, tl.length() - 1)) * 1000 * 60 * 60;
                 } else if (tl.endsWith("m")) {
                     timeLimit = (int) Double.parseDouble(tl.substring(0, tl.length() - 1)) * 1000 * 60;
-                } else if (tl.endsWith("s")) {
-                    timeLimit = (int) Double.parseDouble(tl.substring(0, tl.length() - 1)) * 1000;
                 } else if (tl.endsWith("ms")) {
                     timeLimit = Integer.parseInt(tl.substring(0, tl.length() - 2));
+                } else if (tl.endsWith("s")) {
+                    timeLimit = (int) Double.parseDouble(tl.substring(0, tl.length() - 1)) * 1000;
                 } else {
                     timeLimit = Integer.parseInt(tl);
                 }
@@ -57,8 +57,8 @@ public class NaiveInvoker implements Invoker {
             String args = "";
             if (options.hasParameter("args")) args = options.getParameter("args");
 
-            logger.info("Naive invoker: " + (memoryLimit == 0 ? "no memory limit" : memoryLimit + " bytes") +
-                    ", " + (timeLimit == 0 ? "no time limit" : timeLimit + " ms") + ". " + options.getParameter("executable"));
+            logger.info("Naive invoker: " + ((memoryLimit == 0) && false ? "no memory limit" : memoryLimit + " bytes") +
+                    ", " + (timeLimit == 0 ? "no time limit" : timeLimit + " ms") + ", no process limit. " + options.getParameter("executable"));
 
 
             ProcessBuilder builder = new ProcessBuilder(OS.isWindows() ? new String[]{options.getParameter("executable"), args}
@@ -81,7 +81,10 @@ public class NaiveInvoker implements Invoker {
             if (timeLimit > 0) process.waitFor(timeLimit, TimeUnit.MILLISECONDS);
             else process.waitFor();
 
-            process.destroy();
+            if (process.isAlive()) {
+                process.destroyForcibly();
+                process.waitFor();
+            }
 
             long endTime = System.currentTimeMillis();
 

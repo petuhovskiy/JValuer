@@ -8,7 +8,6 @@ import com.petukhovsky.jvaluer.invoker.PythonInvoker;
 import com.petukhovsky.jvaluer.lang.Language;
 import com.petukhovsky.jvaluer.lang.Languages;
 import com.petukhovsky.jvaluer.util.OSRelatedValue;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,10 +44,5 @@ public class JValuerTest {
         Languages languages = loadJValuer().getLanguages();
         assertEquals(languages.findByExtension("py").name(), "Python 3");
         assertEquals(languages.findByName("c++11").name(), "GNU C++11");
-    }
-
-    @After
-    public void after() {
-        jValuer.clearTemp();
     }
 }
