@@ -77,7 +77,7 @@ public class RunInfo {
 
     @Override
     public String toString() {
-        return "(" + this.getTimeString() + ", " + this.getMemoryString() + ") " + this.getComment() +
+        return runVerdict + " (" + this.getTimeString() + ", " + this.getMemoryString() + ") " + this.getComment() +
                 (this.getExitCode() != 0 ? " [exitcode: " + this.getExitCode() + "]" : "");
     }
 }
