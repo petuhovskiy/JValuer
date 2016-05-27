@@ -3,12 +3,12 @@ package com.petukhovsky.jvaluer.units;
 import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
+import com.petukhovsky.jvaluer.local.OS;
+import com.petukhovsky.jvaluer.local.OSRelatedValue;
 import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.RunVerdict;
 import com.petukhovsky.jvaluer.run.Runner;
 import com.petukhovsky.jvaluer.test.StringData;
-import com.petukhovsky.jvaluer.util.OS;
-import com.petukhovsky.jvaluer.util.OSRelatedValue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,7 +61,7 @@ public class SecurityViolationTest {
         String exe = new OSRelatedValue<String>()
                 .windows("notepad.exe")
                 .unix("subl")
-                .value().orElse(null);
+                .orElse(null);
         Random random = new Random();
         for (int i = 0; i < 2; i++) {
             int a = random.nextInt(5);
