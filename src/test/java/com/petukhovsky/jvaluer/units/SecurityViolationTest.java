@@ -3,7 +3,6 @@ package com.petukhovsky.jvaluer.units;
 import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
-import com.petukhovsky.jvaluer.local.OS;
 import com.petukhovsky.jvaluer.local.OSRelatedValue;
 import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.RunVerdict;
@@ -43,7 +42,7 @@ public class SecurityViolationTest {
     @Test
     public void testRunexeLinux() throws IOException {
         RunexeInvoker invoker = new RunexeInvoker();
-        if (!OS.isUnix()) {
+        if (new OSRelatedValue<Boolean>().windows(true).unix(false).orElse(true)) {
             logger.info("Runexe security violation test skip");
             return;
         }

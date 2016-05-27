@@ -51,6 +51,6 @@ public class OSRelatedSupplier<T> {
     }
 
     public T orNull() {
-        return null;
+        return orElse(() -> null);
     }
 }
