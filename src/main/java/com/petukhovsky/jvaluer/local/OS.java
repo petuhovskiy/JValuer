@@ -1,4 +1,4 @@
-package com.petukhovsky.jvaluer.util;
+package com.petukhovsky.jvaluer.local;
 
 /**
  * Created by Arthur Petukhovsky on 5/21/2016.

@@ -1,10 +1,10 @@
 package com.petukhovsky.jvaluer.invoker;
 
 import com.petukhovsky.jvaluer.JValuer;
+import com.petukhovsky.jvaluer.local.OS;
 import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.RunOptions;
 import com.petukhovsky.jvaluer.run.RunVerdict;
-import com.petukhovsky.jvaluer.util.OS;
 import com.petukhovsky.jvaluer.util.PidUtils;
 
 import java.io.File;

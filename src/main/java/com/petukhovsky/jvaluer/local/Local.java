@@ -1,4 +1,4 @@
-package com.petukhovsky.jvaluer.util;
+package com.petukhovsky.jvaluer.local;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,14 +50,14 @@ public class Local {
     }
 
     public static void chmod777(Path executable) {
-        if (new OSRelatedValue<Boolean>().osx(true).unix(true).value().orElse(false)) {
+        if (new OSRelatedValue<Boolean>().osx(true).unix(true).orElse(false)) {
             try {
                 chmod777Unix(executable);
             } catch (IOException e) {
                 logger.log(Level.WARNING, "posix permissions", e);
                 chmod777Old(executable);
             }
-        } else if (new OSRelatedValue<Boolean>().windows(true).value().orElse(false)) {
+        } else if (new OSRelatedValue<Boolean>().windows(true).orElse(false)) {
             chmod777Old(executable);
             /* TODO use this
             try {

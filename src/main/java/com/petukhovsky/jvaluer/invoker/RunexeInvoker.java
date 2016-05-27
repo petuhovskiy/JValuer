@@ -1,11 +1,11 @@
 package com.petukhovsky.jvaluer.invoker;
 
 import com.petukhovsky.jvaluer.JValuer;
+import com.petukhovsky.jvaluer.local.Local;
+import com.petukhovsky.jvaluer.local.OS;
 import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.RunOptions;
 import com.petukhovsky.jvaluer.run.RunVerdict;
-import com.petukhovsky.jvaluer.util.Local;
-import com.petukhovsky.jvaluer.util.OS;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -43,7 +43,7 @@ public class RunexeInvoker implements Invoker {
 
     @Override
     public RunInfo run(JValuer jValuer, RunOptions options) {
-        Path runexe = jValuer.getRunexe1();
+        Path runexe = jValuer.getRunexe();
         try {
             String cmd = String.format("%s -xml", runexe);
 
@@ -81,6 +81,6 @@ public class RunexeInvoker implements Invoker {
     }
 
     public boolean isSupported(JValuer jValuer) {
-        return jValuer.getRunexe1() != null;
+        return jValuer.getRunexe() != null;
     }
 }

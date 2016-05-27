@@ -1,4 +1,4 @@
-package com.petukhovsky.jvaluer.util;
+package com.petukhovsky.jvaluer.local;
 
 import java.util.Optional;
 
@@ -36,6 +36,14 @@ public class OSRelatedValue<T> {
     public OSRelatedValue<T> osx(T value) {
         if (OS.isOSX()) this.value = Optional.of(value);
         return this;
+    }
+
+    public T get() {
+        return value.get();
+    }
+
+    public T orElse(T other) {
+        return value.orElse(other);
     }
 
     public Optional<T> value() {

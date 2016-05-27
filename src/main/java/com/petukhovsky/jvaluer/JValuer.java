@@ -7,13 +7,14 @@ import com.petukhovsky.jvaluer.invoker.NaiveInvoker;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
 import com.petukhovsky.jvaluer.lang.Language;
 import com.petukhovsky.jvaluer.lang.Languages;
+import com.petukhovsky.jvaluer.local.Local;
+import com.petukhovsky.jvaluer.local.OSRelatedSupplier;
+import com.petukhovsky.jvaluer.local.OSRelatedValue;
 import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.RunOptions;
 import com.petukhovsky.jvaluer.run.RunnerBuilder;
 import com.petukhovsky.jvaluer.test.Generator;
 import com.petukhovsky.jvaluer.util.FilesUtils;
-import com.petukhovsky.jvaluer.util.Local;
-import com.petukhovsky.jvaluer.util.OSRelatedValue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +29,7 @@ import java.util.logging.Logger;
 public class JValuer {
 
     private static final Logger logger = Logger.getLogger(JValuer.class.getName());
-    public final String executableSuffix = new OSRelatedValue<String>().windows(".exe").value().orElse(".out");
+    public final String executableSuffix = new OSRelatedValue<String>().windows(".exe").orElse(".out");
 
     private Languages languages;
 
@@ -36,7 +37,7 @@ public class JValuer {
     private Path temp;
     private Path resources;
 
-    private Path runexe1;
+    private Path runexe;
 
     private Invoker defaultInvoker;
 
@@ -60,15 +61,15 @@ public class JValuer {
         defaultInvoker = new OSRelatedValue<Invoker>()
                 .windows(new RunexeInvoker())
                 .unix(new RunexeInvoker())
-                .value().orElse(new NaiveInvoker());
+                .orElse(new NaiveInvoker());
     }
 
     private void loadResources() {
-        this.runexe1 = new OSRelatedValue<Path>()
-                .windows(loadResource("runexe1.exe", "/runexe.exe"))
-                .unix(loadResource("runexe1", "/runexe_linux"))
-                .value().orElse(null);
-        if (this.runexe1 != null) Local.chmod777(this.runexe1);
+        this.runexe = new OSRelatedSupplier<Path>()
+                .windows(() -> loadResource("runexe.exe", "/runexe.exe"))
+                .unix(() -> loadResource("runexe", "/runexe_linux"))
+                .orNull();
+        if (this.runexe != null) Local.chmod777(this.runexe);
 
     }
 
@@ -128,8 +129,8 @@ public class JValuer {
         return languages;
     }
 
-    public Path getRunexe1() {
-        return runexe1;
+    public Path getRunexe() {
+        return runexe;
     }
 
     public Generator createGenerator(Path exe) {
