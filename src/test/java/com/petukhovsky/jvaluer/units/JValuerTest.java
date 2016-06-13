@@ -4,7 +4,7 @@ import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.JValuerBuilder;
 import com.petukhovsky.jvaluer.compiler.CloneCompiler;
 import com.petukhovsky.jvaluer.compiler.RunnableCompiler;
-import com.petukhovsky.jvaluer.invoker.PythonInvoker;
+import com.petukhovsky.jvaluer.invoker.CustomInvoker;
 import com.petukhovsky.jvaluer.lang.Language;
 import com.petukhovsky.jvaluer.lang.Languages;
 import com.petukhovsky.jvaluer.local.OSRelatedValue;
@@ -28,7 +28,8 @@ public class JValuerTest {
                 .addLanguage(new Language("GNU C++11", new RunnableCompiler("g++", "{defines} -O2 -o {output} {source}")),
                         new String[]{"cpp"}, new String[]{"c++11", "cpp11"})
                 .addLanguage(new Language("Python 3", new CloneCompiler(),
-                                new PythonInvoker(new OSRelatedValue<String>().windows("c:/Programs/Python-3/python.exe").orElse("python3"))),
+                                new CustomInvoker(new OSRelatedValue<String>()
+                                        .windows("c:/Programs/Python-3/python.exe").orElse("python3"), "{exe} {args}")),
                         new String[]{"py"}, new String[]{"python", "py", "python3"})
                 .setPath(Paths.get("jvaluer-storage"))
                 .build();

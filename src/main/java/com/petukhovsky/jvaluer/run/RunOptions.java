@@ -44,4 +44,8 @@ public class RunOptions {
         map.remove(key);
         return new RunOptions(map);
     }
+
+    public String optParameter(String key, String value) {
+        return params.getOrDefault(key, value);
+    }
 }
