@@ -1,6 +1,6 @@
 package com.petukhovsky.jvaluer.lang;
 
-import com.petukhovsky.jvaluer.compiler.Compiler;
+import com.petukhovsky.jvaluer.commons.compiler.Compiler;
 import com.petukhovsky.jvaluer.invoker.DefaultInvoker;
 import com.petukhovsky.jvaluer.invoker.Invoker;
 

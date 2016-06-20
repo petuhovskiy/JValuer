@@ -1,12 +1,14 @@
 package com.petukhovsky.jvaluer.checker;
 
 import com.petukhovsky.jvaluer.JValuer;
-import com.petukhovsky.jvaluer.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.commons.checker.CheckResult;
+import com.petukhovsky.jvaluer.commons.checker.Checker;
+import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.commons.data.StringData;
+import com.petukhovsky.jvaluer.commons.data.TestData;
+import com.petukhovsky.jvaluer.commons.run.RunInfo;
 import com.petukhovsky.jvaluer.lang.Language;
-import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.Runner;
-import com.petukhovsky.jvaluer.test.StringData;
-import com.petukhovsky.jvaluer.test.TestData;
 
 import java.io.Closeable;
 import java.io.IOException;

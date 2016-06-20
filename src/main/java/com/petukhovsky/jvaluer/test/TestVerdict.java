@@ -1,9 +1,10 @@
 package com.petukhovsky.jvaluer.test;
 
-import com.petukhovsky.jvaluer.checker.CheckResult;
-import com.petukhovsky.jvaluer.checker.Checker;
-import com.petukhovsky.jvaluer.run.RunInfo;
-import com.petukhovsky.jvaluer.run.RunVerdict;
+import com.petukhovsky.jvaluer.commons.checker.CheckResult;
+import com.petukhovsky.jvaluer.commons.checker.Checker;
+import com.petukhovsky.jvaluer.commons.data.TestData;
+import com.petukhovsky.jvaluer.commons.run.RunInfo;
+import com.petukhovsky.jvaluer.commons.run.RunVerdict;
 
 /**
  * Created by Arthur on 12/20/2015.

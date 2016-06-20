@@ -1,20 +1,20 @@
 package com.petukhovsky.jvaluer;
 
-import com.petukhovsky.jvaluer.compiler.CompilationResult;
-import com.petukhovsky.jvaluer.compiler.Compiler;
+import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.commons.compiler.Compiler;
+import com.petukhovsky.jvaluer.commons.local.Local;
+import com.petukhovsky.jvaluer.commons.local.OSRelatedSupplier;
+import com.petukhovsky.jvaluer.commons.local.OSRelatedValue;
+import com.petukhovsky.jvaluer.commons.run.RunInfo;
+import com.petukhovsky.jvaluer.commons.run.RunOptions;
+import com.petukhovsky.jvaluer.commons.util.FilesUtils;
+import com.petukhovsky.jvaluer.generator.Generator;
 import com.petukhovsky.jvaluer.invoker.Invoker;
 import com.petukhovsky.jvaluer.invoker.NaiveInvoker;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
 import com.petukhovsky.jvaluer.lang.Language;
 import com.petukhovsky.jvaluer.lang.Languages;
-import com.petukhovsky.jvaluer.local.Local;
-import com.petukhovsky.jvaluer.local.OSRelatedSupplier;
-import com.petukhovsky.jvaluer.local.OSRelatedValue;
-import com.petukhovsky.jvaluer.run.RunInfo;
-import com.petukhovsky.jvaluer.run.RunOptions;
 import com.petukhovsky.jvaluer.run.RunnerBuilder;
-import com.petukhovsky.jvaluer.test.Generator;
-import com.petukhovsky.jvaluer.util.FilesUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;

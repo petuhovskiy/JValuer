@@ -1,7 +1,9 @@
-package com.petukhovsky.jvaluer.test;
+package com.petukhovsky.jvaluer.generator;
 
 import com.petukhovsky.jvaluer.JValuer;
-import com.petukhovsky.jvaluer.run.RunInfo;
+import com.petukhovsky.jvaluer.commons.data.GeneratedData;
+import com.petukhovsky.jvaluer.commons.data.StringData;
+import com.petukhovsky.jvaluer.commons.run.RunInfo;
 import com.petukhovsky.jvaluer.run.Runner;
 
 import java.io.Closeable;

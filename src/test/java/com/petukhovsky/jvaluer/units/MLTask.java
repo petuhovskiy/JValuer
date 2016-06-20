@@ -4,7 +4,6 @@ import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
 import com.petukhovsky.jvaluer.run.RunInfo;
-import com.petukhovsky.jvaluer.run.RunVerdict;
 import com.petukhovsky.jvaluer.run.Runner;
 import com.petukhovsky.jvaluer.test.StringData;
 import org.junit.Before;

@@ -8,12 +8,10 @@ targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-}
-
-jar {
-    baseName = 'jvaluer-lib'
+    compile 'com.github.petuhovskiy:jvaluer-commons:v0.0.2'
 }
