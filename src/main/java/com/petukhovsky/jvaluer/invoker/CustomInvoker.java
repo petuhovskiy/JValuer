@@ -4,29 +4,29 @@ import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.commons.run.RunInfo;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /**
  * Created by Arthur Petukhovsky on 6/13/2016.
  */
 public class CustomInvoker implements Invoker {
-    private String pattern;
-    private String executable;
+    private final String pattern;
+    private final Path executable;
 
     public CustomInvoker(String executable, String pattern) {
         this.pattern = pattern;
-        this.executable = executable;
+        this.executable = Paths.get(executable);
     }
 
     @Override
     public RunInfo run(JValuer jValuer, RunOptions options) {
-        String args = options.optParameter("args", "");
-        String executable = options.getParameter("executable");
-        options = options.append("args", processPattern(pattern, args, executable))
-                .append("executable", this.executable);
+        options = options.setArgs(processPattern(pattern, options.getArgs(), options.getExe().toString())).setExe(this.executable);
         return jValuer.invokeDefault(options);
     }
 
     private String processPattern(String pattern, String args, String executable) {
         return pattern.replaceAll("\\{args\\}", args)
-                .replaceAll("\\{exe\\}", executable);
+                .replaceAll("\\{exe\\}", "\"" + executable + "\"");
     }
 }

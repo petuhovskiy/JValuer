@@ -9,9 +9,9 @@ import com.petukhovsky.jvaluer.invoker.Invoker;
  */
 public class Language {
 
-    private String name;
-    private Compiler compiler;
-    private Invoker invoker;
+    private final String name;
+    private final Compiler compiler;
+    private final Invoker invoker;
 
     public Language(String name, Compiler compiler, Invoker invoker) {
         this.name = name;

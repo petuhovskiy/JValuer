@@ -1,11 +1,13 @@
 package com.petukhovsky.jvaluer.units;
 
 import com.petukhovsky.jvaluer.JValuer;
-import com.petukhovsky.jvaluer.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.commons.data.StringData;
+import com.petukhovsky.jvaluer.commons.run.RunInfo;
+import com.petukhovsky.jvaluer.commons.run.RunLimits;
+import com.petukhovsky.jvaluer.commons.run.RunVerdict;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
-import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.Runner;
-import com.petukhovsky.jvaluer.test.StringData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,21 +50,20 @@ public class MLTask {
         final int mb = 1024 * 1024 / 4;
         for (int i = 64; i <= 256; i *= 2) {
             try (Runner runner = jValuer.createRunner()
-                    .setTrusted()
-                    .setInvoker(invoker)
-                    .setMemoryLimit(i + "M")
-                    .build()) {
-                runner.provideExecutable(exe);
+                    .trusted()
+                    .invoker(invoker)
+                    .limits(RunLimits.ofMemory(1024L * 1024 * i))
+                    .build(exe)) {
                 int a = 5 + random.nextInt(100);
-                RunInfo info = runner.run(new StringData(a + ""));
+                RunInfo info = runner.run(new StringData(a + "")).getRun();
                 logger.severe(info + "");
                 assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
                 a = (i - 13) * mb;
-                info = runner.run(new StringData(a + ""));
+                info = runner.run(new StringData(a + "")).getRun();
                 logger.severe(info + "");
                 assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
                 a = i * mb;
-                info = runner.run(new StringData(a + ""));
+                info = runner.run(new StringData(a + "")).getRun();
                 logger.severe(info + "");
                 assertTrue(info.getRunVerdict() == RunVerdict.MEMORY_LIMIT_EXCEEDED);
             }

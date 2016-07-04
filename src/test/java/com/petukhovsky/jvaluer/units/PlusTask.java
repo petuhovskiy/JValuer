@@ -1,12 +1,15 @@
 package com.petukhovsky.jvaluer.units;
 
 import com.petukhovsky.jvaluer.JValuer;
-import com.petukhovsky.jvaluer.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.commons.data.StringData;
+import com.petukhovsky.jvaluer.commons.run.InvocationResult;
+import com.petukhovsky.jvaluer.commons.run.RunInOut;
+import com.petukhovsky.jvaluer.commons.run.RunInfo;
+import com.petukhovsky.jvaluer.commons.run.RunVerdict;
 import com.petukhovsky.jvaluer.invoker.NaiveInvoker;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
-import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.Runner;
-import com.petukhovsky.jvaluer.test.StringData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,12 +51,10 @@ public class PlusTask {
             return;
         }
         try (Runner runner = jValuer.createRunner()
-                .setIn("input.txt")
-                .setOut("output.txt")
-                .setTrusted()
-                .setInvoker(invoker)
-                .build()) {
-            runner.provideExecutable(exe);
+                .inOut(RunInOut.txt())
+                .trusted()
+                .invoker(invoker)
+                .build(exe)) {
             tests20(runner);
         }
     }
@@ -61,11 +62,10 @@ public class PlusTask {
     @Test(timeout = 20000)
     public void testNaive() throws IOException {
         try (Runner runner = jValuer.createRunner()
-                .setIn("input.txt")
-                .setOut("output.txt")
-                .setInvoker(new NaiveInvoker())
-                .build()) {
-            runner.provideExecutable(exe);
+                .inOut(RunInOut.txt())
+                .trusted()
+                .invoker(new NaiveInvoker())
+                .build(exe)) {
             tests20(runner);
         }
     }
@@ -76,9 +76,10 @@ public class PlusTask {
             int a = random.nextInt(100500);
             int b = random.nextInt(100500);
             int result = a + b;
-            RunInfo info = runner.run(new StringData(a + " " + b));
+            InvocationResult ir = runner.run(new StringData(a + " " + b));
+            RunInfo info = ir.getRun();
             assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
-            assertEquals(runner.getOutput().getString(), result + "");
+            assertEquals(ir.getOut().getString(), result + "");
         }
     }
 

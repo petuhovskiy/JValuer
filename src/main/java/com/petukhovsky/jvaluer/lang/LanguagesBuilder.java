@@ -10,9 +10,9 @@ import java.util.Map;
  */
 public class LanguagesBuilder {
 
-    private Map<String, Language> names;
-    private Map<String, Language> exts;
-    private List<Language> list;
+    private final Map<String, Language> names;
+    private final Map<String, Language> exts;
+    private final List<Language> list;
 
     public LanguagesBuilder() {
         this.names = new HashMap<>();

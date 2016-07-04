@@ -3,7 +3,9 @@ package com.petukhovsky.jvaluer.invoker;
 import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.commons.local.Local;
 import com.petukhovsky.jvaluer.commons.local.OS;
+import com.petukhovsky.jvaluer.commons.local.UserAccount;
 import com.petukhovsky.jvaluer.commons.run.RunInfo;
+import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
 import com.petukhovsky.jvaluer.commons.run.RunVerdict;
 import org.w3c.dom.Document;
@@ -47,17 +49,25 @@ public class RunexeInvoker implements Invoker {
         try {
             String cmd = String.format("%s -xml", runexe);
 
-            if (options.hasParameter("folder")) cmd += " -d \"" + options.getParameter("folder") + "\"";
-            if (options.hasParameter("stdin")) cmd += " -i \"" + options.getParameter("stdin") + "\"";
-            if (options.hasParameter("stdout")) cmd += " -o \"" + options.getParameter("stdout") + "\"";
-            if (options.hasParameter("stderr")) cmd += " -e \"" + options.getParameter("stderr") + "\"";
-            if (OS.isWindows() && options.hasParameter("trusted")) cmd += " -z";
-            if (options.hasParameter("login")) cmd += " -l " + options.getParameter("login");
-            if (options.hasParameter("password")) cmd += " -p " + options.getParameter("password");
-            if (options.hasParameter("memory_limit")) cmd += " -m " + options.getParameter("memory_limit");
-            if (options.hasParameter("time_limit")) cmd += " -t " + options.getParameter("time_limit");
-            cmd += " \"" + options.getParameter("executable") + "\"";
-            if (options.hasParameter("args")) cmd += " " + options.getParameter("args");
+            if (options.getFolder() != null) cmd += " -d \"" + options.getFolder().toAbsolutePath() + "\"";
+            if (options.getStdinForward() != null) cmd += " -i \"" + options.getStdinForward().toAbsolutePath() + "\"";
+            if (options.getStdoutForward() != null)
+                cmd += " -o \"" + options.getStdoutForward().toAbsolutePath() + "\"";
+            if (options.getStderrForward() != null)
+                cmd += " -e \"" + options.getStderrForward().toAbsolutePath() + "\"";
+            if (OS.isWindows() && options.isTrusted()) cmd += " -z";
+
+            if (options.getUserAccount() != null) {
+                UserAccount ua = options.getUserAccount();
+                cmd += " -l " + ua.getLogin();
+                if (ua.getPassword() != null) cmd += " -p " + ua.getPassword();
+            }
+
+            RunLimits limits = options.getLimits();
+            if (limits.getMemory() != null) cmd += " -m " + limits.getMemory();
+            if (limits.getTime() != null) cmd += " -t " + limits.getTime();
+
+            cmd += " \"" + options.getExe().toAbsolutePath() + "\" " + options.getArgs();
 
             logger.info("Invoker runs runexe with cmd: " + cmd);
 
@@ -67,10 +77,10 @@ public class RunexeInvoker implements Invoker {
             Document doc = builder.parse(process.getInputStream());
             String verdict = doc.getElementsByTagName("invocationVerdict").item(0).getTextContent();
             int exitCode = Integer.parseInt(doc.getElementsByTagName("exitCode").item(0).getTextContent());
-            int userTime = Integer.parseInt(doc.getElementsByTagName("processorUserModeTime").item(0).getTextContent());
-            int kernelTime = Integer.parseInt(doc.getElementsByTagName("processorKernelModeTime").item(0).getTextContent());
-            int passedTime = Integer.parseInt(doc.getElementsByTagName("passedTime").item(0).getTextContent());
-            int consumedMemory = Integer.parseInt(doc.getElementsByTagName("consumedMemory").item(0).getTextContent());
+            long userTime = Integer.parseInt(doc.getElementsByTagName("processorUserModeTime").item(0).getTextContent());
+            long kernelTime = Integer.parseInt(doc.getElementsByTagName("processorKernelModeTime").item(0).getTextContent());
+            long passedTime = Integer.parseInt(doc.getElementsByTagName("passedTime").item(0).getTextContent());
+            long consumedMemory = Integer.parseInt(doc.getElementsByTagName("consumedMemory").item(0).getTextContent());
             String comment = doc.getElementsByTagName("comment").item(0).getTextContent();
 
             return RunInfo.completed(RunVerdict.valueOf(verdict), exitCode, userTime, kernelTime, passedTime, consumedMemory, comment);

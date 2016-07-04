@@ -47,7 +47,7 @@ public class JValuer {
         try {
             Files.createDirectories(path);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "jvaleur folder creation", e);
+            logger.log(Level.SEVERE, "jvaluer folder creation", e);
         }
         FilesUtils.clearFolder(path);
         this.temp = path.resolve("temp");

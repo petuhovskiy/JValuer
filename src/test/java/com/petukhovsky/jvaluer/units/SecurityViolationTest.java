@@ -1,11 +1,14 @@
 package com.petukhovsky.jvaluer.units;
 
 import com.petukhovsky.jvaluer.JValuer;
-import com.petukhovsky.jvaluer.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.commons.data.StringData;
+import com.petukhovsky.jvaluer.commons.local.OSRelatedValue;
+import com.petukhovsky.jvaluer.commons.run.RunInfo;
+import com.petukhovsky.jvaluer.commons.run.RunLimits;
+import com.petukhovsky.jvaluer.commons.run.RunVerdict;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
-import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.Runner;
-import com.petukhovsky.jvaluer.test.StringData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,10 +49,9 @@ public class SecurityViolationTest {
         }
         //requires user with low permissions
         try (Runner runner = jValuer.createRunner()
-                .setTimeLimit("1000ms")
-                .setInvoker(invoker)
-                .build()) {
-            runner.provideExecutable(exe);
+                .limits(RunLimits.ofTime(1000L))
+                .invoker(invoker)
+                .build(exe)) {
             tests(runner);
         }
     }
@@ -63,13 +65,13 @@ public class SecurityViolationTest {
         for (int i = 0; i < 2; i++) {
             int a = random.nextInt(5);
             int b = random.nextInt(5);
-            RunInfo info = runner.run(new StringData(a + " " + b + " " + exe));
+            RunInfo info = runner.run(new StringData(a + " " + b + " " + exe)).getRun();
             assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
         }
         for (int i = 0; i < 2; i++) {
             int a = 123;
             int b = random.nextInt(100);
-            RunInfo info = runner.run(new StringData(a + " " + b + " " + exe));
+            RunInfo info = runner.run(new StringData(a + " " + b + " " + exe)).getRun();
             logger.severe(info + "");
             assertTrue(info.getRunVerdict() == RunVerdict.SECURITY_VIOLATION);
         }

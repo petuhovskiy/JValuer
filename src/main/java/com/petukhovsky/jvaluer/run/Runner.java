@@ -4,7 +4,9 @@ import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.commons.data.PathData;
 import com.petukhovsky.jvaluer.commons.data.TestData;
 import com.petukhovsky.jvaluer.commons.local.Local;
-import com.petukhovsky.jvaluer.commons.run.RunInfo;
+import com.petukhovsky.jvaluer.commons.run.InvocationResult;
+import com.petukhovsky.jvaluer.commons.run.RunInOut;
+import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
 import com.petukhovsky.jvaluer.commons.util.FilesUtils;
 import com.petukhovsky.jvaluer.invoker.Invoker;
@@ -27,35 +29,43 @@ public class Runner implements Closeable, AutoCloseable {
 
     private final static Logger logger = Logger.getLogger(Runner.class.getName());
 
-    private Path folder;
-    private Path executable;
-    private Path in, out;
-    private Invoker invoker;
-    private RunOptions options;
+    private final Path dir;
+    private final Path executable;
+    private final Path in, out;
+    private final Invoker invoker;
+    private final RunOptions options;
 
-    private JValuer jValuer;
+    private final JValuer jValuer;
 
-    Runner(JValuer jValuer, Path folder, RunOptions options, Invoker invoker, String in, String out) {
-        logger.fine("Creating runner with folder=" + folder + ", in=" + in + ", out=" + out);
-        this.folder = folder;
-        this.executable = folder.resolve("solution" + jValuer.executableSuffix);
+    Runner(JValuer jValuer, Path dir, Path exe, RunOptions options, Invoker invoker, RunInOut inOut) {
+        logger.fine("Creating runner with dir=" + dir + ", in=" + inOut.getIn() + ", out=" + inOut.getOut());
+        this.dir = dir;
+        this.executable = dir.resolve("solution" + jValuer.executableSuffix);
+        Local.chmod777(this.executable);
+        try {
+            Files.copy(exe, executable, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("can't copy specified exe");
+        }
         this.invoker = invoker;
-        this.options = options.append("executable", executable.toString());
+        options = options.setExe(this.executable);
 
         this.jValuer = jValuer;
 
-        this.in = folder.resolve(in);
-        this.out = folder.resolve(out);
+        this.in = dir.resolve(inOut.getIn());
+        this.out = dir.resolve(inOut.getOut());
 
-        if (in.equals("stdin")) this.options = this.options.append("stdin", this.in.toString());
-        switch (out) {
+        if (inOut.getIn().equals("stdin")) options = options.setStdinForward(this.in);
+        switch (inOut.getOut()) {
             case "stdout":
-                this.options = this.options.append("stdout", this.out.toString());
+                options = options.setStdoutForward(this.out);
                 break;
             case "stderr":
-                this.options = this.options.append("stderr", this.out.toString());
+                options = options.setStderrForward(this.out);
                 break;
         }
+        this.options = options;
     }
 
     private void clear(Path path, String... values) throws IOException {
@@ -76,57 +86,56 @@ public class Runner implements Closeable, AutoCloseable {
         });
     }
 
-    public void clear() {
+    private void clearButExe() {
         try {
-            clear(folder);
+            clear(dir, executable.getFileName().toString());
         } catch (IOException e) {
-            logger.log(Level.WARNING, "Can't clear runner folder", e);
+            logger.log(Level.WARNING, "can't clear dir", e);
         }
     }
 
-    public void provideExecutable(Path path) {
-        try {
-            clear();
-            Files.copy(path, executable);
-            Local.chmod777(this.executable);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private RunInfo run(String... args) {
+    private InvocationResult run(RunOptions options) {
         try {
             Files.createFile(out);
             Local.chmod777(this.in);
             Local.chmod777(this.out);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, "can't init in/out", e);
         }
-        return jValuer.invoke(invoker, args.length > 0 ? options.append("args", String.join(" ", args)) : options);
+        return new InvocationResult(jValuer.invoke(invoker, options), new PathData(out));
     }
 
-    public RunInfo run(TestData testData, String... args) {
-        return run(testData.openInputStream(), args);
+    public InvocationResult run(TestData testData, String... args) {
+        return run(testData.openInputStream(), null, args);
     }
 
-    public RunInfo run(InputStream test, String... args) {
-        try {
-            clear(folder, executable.getFileName().toString());
-            Files.copy(test, in, StandardCopyOption.REPLACE_EXISTING);
-            test.close();
+    public InvocationResult run(TestData testData, RunLimits limits, String... args) {
+        return run(testData.openInputStream(), limits, args);
+    }
+
+    public InvocationResult run(InputStream is, String... args) {
+        return run(is, null, args);
+    }
+
+    public InvocationResult run(InputStream is, RunLimits limits, String... args) {
+        RunOptions options = this.options;
+        if (limits != null) options = options.setLimits(limits);
+        if (args != null) options = options.setArgs(String.join(" ", args));
+        return run(is, options);
+    }
+
+    private InvocationResult run(InputStream test, RunOptions options) {
+        clearButExe();
+        try (InputStream is = test) {
+            Files.copy(is, in, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, "fail while copying", e);
         }
-        return run(args);
-    }
-
-    public PathData getOutput() {
-        return new PathData(out);
+        return run(options);
     }
 
     @Override
     public void close() throws IOException {
-        FilesUtils.clearFolder(folder);
-        Files.delete(folder);
+        FilesUtils.deleteDirectory(dir);
     }
 }

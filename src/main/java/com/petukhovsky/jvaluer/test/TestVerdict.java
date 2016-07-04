@@ -49,7 +49,7 @@ public class TestVerdict {
     }
 
     public String getTime() {
-        int time = info.getUserTime();
+        long time = info.getUserTime();
         return time + " ms";
     }
 

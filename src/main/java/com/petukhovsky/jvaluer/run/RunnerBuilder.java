@@ -1,68 +1,83 @@
 package com.petukhovsky.jvaluer.run;
 
 import com.petukhovsky.jvaluer.JValuer;
+import com.petukhovsky.jvaluer.commons.local.UserAccount;
+import com.petukhovsky.jvaluer.commons.run.RunInOut;
+import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
 import com.petukhovsky.jvaluer.invoker.DefaultInvoker;
 import com.petukhovsky.jvaluer.invoker.Invoker;
 
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Arthur Petukhovsky on 5/21/2016.
  */
 public class RunnerBuilder {
 
-    private Path dir;
-    private JValuer jValuer;
+    private final Path dir;
+    private final JValuer jValuer;
+    private final Map<String, Object> custom;
     private RunOptions options;
     private Invoker invoker;
-
-    private String in;
-    private String out;
+    private RunInOut inOut;
 
     public RunnerBuilder(Path dir, JValuer jValuer) {
         this.dir = dir;
         this.jValuer = jValuer;
-        this.options = new RunOptions("folder", dir.toAbsolutePath().toString());
+        this.options = new RunOptions().setFolder(dir);
         this.invoker = new DefaultInvoker();
-        this.in = "stdin";
-        this.out = "stdout";
+        this.inOut = RunInOut.std();
+        this.custom = new HashMap<>();
     }
 
-    public RunnerBuilder addOption(String key, String value) {
-        if (key.equals("folder") || key.equals("executable")) throw new RuntimeException("Forbidden key/value option");
-        options = options.append(key, value);
+    public RunnerBuilder custom(String key, Object value) {
+        custom.put(key, value);
         return this;
     }
 
-    public RunnerBuilder setTimeLimit(String timeLimit) {
-        return addOption("time_limit", timeLimit);
-    }
-
-    public RunnerBuilder setMemoryLimit(String memoryLimit) {
-        return addOption("memory_limit", memoryLimit);
-    }
-
-    public RunnerBuilder setIn(String in) {
-        this.in = in;
+    public RunnerBuilder limits(RunLimits limits) {
+        this.options = this.options.setLimits(limits);
         return this;
     }
 
-    public RunnerBuilder setOut(String out) {
-        this.out = out;
+    public RunnerBuilder inOut(RunInOut inOut) {
+        this.inOut = inOut;
         return this;
     }
 
-    public RunnerBuilder setTrusted() {
-        return addOption("trusted", "");
+    public RunnerBuilder trusted(boolean trusted) {
+        this.options = this.options.setTrusted(trusted);
+        return this;
     }
 
-    public RunnerBuilder setInvoker(Invoker invoker) {
+    public RunnerBuilder trusted() {
+        return trusted(true);
+    }
+
+    public RunnerBuilder invoker(Invoker invoker) {
         this.invoker = invoker;
         return this;
     }
 
-    public Runner build() {
-        return new Runner(jValuer, dir, options, invoker, in, out);
+    public RunnerBuilder injectDll(Path dll) {
+        this.options = this.options.setDllInject(dll);
+        return this;
+    }
+
+    public RunnerBuilder account(UserAccount userAccount) {
+        this.options = this.options.setUserAccount(userAccount);
+        return this;
+    }
+
+    public RunnerBuilder args(String args) {
+        this.options.setArgs(args);
+        return this;
+    }
+
+    public Runner build(Path exe) {
+        return new Runner(jValuer, dir, exe, options.setCustom(custom), invoker, inOut);
     }
 }

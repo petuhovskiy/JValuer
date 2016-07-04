@@ -6,7 +6,8 @@ import com.petukhovsky.jvaluer.commons.checker.Checker;
 import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.commons.data.StringData;
 import com.petukhovsky.jvaluer.commons.data.TestData;
-import com.petukhovsky.jvaluer.commons.run.RunInfo;
+import com.petukhovsky.jvaluer.commons.run.InvocationResult;
+import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.lang.Language;
 import com.petukhovsky.jvaluer.run.Runner;
 
@@ -19,22 +20,21 @@ import java.nio.file.Path;
  */
 public class RunnableChecker extends Checker implements Closeable, AutoCloseable {
 
-    private Path exe;
-    private Runner runner;
+    private final Path exe;
+    private final Runner runner;
 
-    private JValuer jValuer;
+    private final JValuer jValuer;
 
-    private RunnableChecker(JValuer jValuer, Path source, Runner runner, Language language) {
+    public RunnableChecker(JValuer jValuer, Path source, Language language, RunLimits limits) {
         this.jValuer = jValuer;
         CompilationResult result = jValuer.compile(language, source);
         if (!result.isSuccess()) throw new RuntimeException("Can't compile checker:\n" + result.getComment());
         this.exe = result.getExe();
-        this.runner = runner;
-        this.runner.provideExecutable(exe);
+        this.runner = jValuer.createRunner().limits(limits).invoker(language.invoker()).build(exe);
     }
 
     public RunnableChecker(JValuer jValuer, Path source, Language language) {
-        this(jValuer, source, jValuer.createRunner().setTimeLimit("10s").setMemoryLimit("512M").build(), language);
+        this(jValuer, source, language, new RunLimits(10000L, 1024L * 1024 * 512));
     }
 
     public RunnableChecker(JValuer jValuer, Path source) {
@@ -43,8 +43,8 @@ public class RunnableChecker extends Checker implements Closeable, AutoCloseable
 
     @Override
     public CheckResult check(TestData in, TestData answer, TestData out) {
-        RunInfo info = runner.run(new StringData(""), String.format("\"%s\" \"%s\" \"%s\"", in.getPath(), out.getPath(), answer.getPath()));
-        return new CheckResult(info.getExitCode() == 0, runner.getOutput().getString());
+        InvocationResult result = runner.run(new StringData(""), in.getPath().toString(), out.getPath().toString(), answer.getPath().toString());
+        return new CheckResult(result.getRun().getExitCode() == 0, result.getOut().getString());
     }
 
     @Override

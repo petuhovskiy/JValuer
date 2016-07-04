@@ -1,12 +1,14 @@
 package com.petukhovsky.jvaluer.units;
 
 import com.petukhovsky.jvaluer.JValuer;
-import com.petukhovsky.jvaluer.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.commons.data.StringData;
+import com.petukhovsky.jvaluer.commons.run.RunInfo;
+import com.petukhovsky.jvaluer.commons.run.RunLimits;
+import com.petukhovsky.jvaluer.commons.run.RunVerdict;
 import com.petukhovsky.jvaluer.invoker.NaiveInvoker;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
-import com.petukhovsky.jvaluer.run.RunInfo;
 import com.petukhovsky.jvaluer.run.Runner;
-import com.petukhovsky.jvaluer.test.StringData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,11 +48,10 @@ public class TLTask {
             return;
         }
         try (Runner runner = jValuer.createRunner()
-                .setTimeLimit("1000ms")
-                .setTrusted()
-                .setInvoker(invoker)
-                .build()) {
-            runner.provideExecutable(exe);
+                .limits(RunLimits.ofTime(1000L))
+                .trusted()
+                .invoker(invoker)
+                .build(exe)) {
             tests(runner);
         }
     }
@@ -58,10 +59,9 @@ public class TLTask {
     @Test
     public void testNaive() throws IOException {
         try (Runner runner = jValuer.createRunner()
-                .setTimeLimit("1000ms")
-                .setInvoker(new NaiveInvoker())
-                .build()) {
-            runner.provideExecutable(exe);
+                .limits(RunLimits.ofTime(1000L))
+                .invoker(new NaiveInvoker())
+                .build(exe)) {
             tests(runner);
         }
     }
@@ -70,12 +70,12 @@ public class TLTask {
         Random random = new Random();
         for (int i = 0; i < 2; i++) {
             int a = random.nextInt(100);
-            RunInfo info = runner.run(new StringData(a + ""));
+            RunInfo info = runner.run(new StringData(a + "")).getRun();
             assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
         }
         for (int i = 0; i < 2; i++) {
             long a = 123456789123456L + random.nextInt(100);
-            RunInfo info = runner.run(new StringData(a + ""));
+            RunInfo info = runner.run(new StringData(a + "")).getRun();
             assertTrue(info.getRunVerdict() == RunVerdict.TIME_LIMIT_EXCEEDED);
         }
     }
