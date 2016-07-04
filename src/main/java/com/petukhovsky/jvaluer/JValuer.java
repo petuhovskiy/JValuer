@@ -7,7 +7,6 @@ import com.petukhovsky.jvaluer.commons.local.OSRelatedSupplier;
 import com.petukhovsky.jvaluer.commons.local.OSRelatedValue;
 import com.petukhovsky.jvaluer.commons.run.RunInfo;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
-import com.petukhovsky.jvaluer.commons.util.FilesUtils;
 import com.petukhovsky.jvaluer.generator.Generator;
 import com.petukhovsky.jvaluer.invoker.Invoker;
 import com.petukhovsky.jvaluer.invoker.NaiveInvoker;
@@ -15,6 +14,8 @@ import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
 import com.petukhovsky.jvaluer.lang.Language;
 import com.petukhovsky.jvaluer.lang.Languages;
 import com.petukhovsky.jvaluer.run.RunnerBuilder;
+import com.petukhovsky.jvaluer.util.FilesUtils;
+import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -43,20 +44,24 @@ public class JValuer {
 
     public JValuer(Languages languages, Path path) {
         this.languages = languages;
-        this.path = path;
+        this.path = path.toAbsolutePath();
         try {
             Files.createDirectories(path);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "jvaluer folder creation", e);
         }
-        FilesUtils.clearFolder(path);
+        FilesUtils.cleanDirectory(path);
         this.temp = path.resolve("temp");
         this.resources = path.resolve("resources");
         try {
-            Files.createDirectory(temp);
-            Files.createDirectory(resources);
+            Files.createDirectories(temp);
         } catch (IOException e) {
-            logger.log(Level.WARNING, "temp + resources creating", e);
+            logger.log(Level.WARNING, "temp creating", e);
+        }
+        try {
+            Files.createDirectories(resources);
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "resources creating", e);
         }
         loadResources();
         loadInvoker();
@@ -84,8 +89,12 @@ public class JValuer {
         return path;
     }
 
-    public void clearTemp() {
-        FilesUtils.clearFolder(temp);
+    public void cleanTemp() {
+        try {
+            FileUtils.cleanDirectory(temp.toFile());
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "can't clean temp", e);
+        }
     }
 
     public Path createTempFile(String prefix, String suffix, FileAttribute<?>... attrs) {

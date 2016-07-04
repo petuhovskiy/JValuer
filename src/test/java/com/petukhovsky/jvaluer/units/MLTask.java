@@ -56,15 +56,15 @@ public class MLTask {
                     .build(exe)) {
                 int a = 5 + random.nextInt(100);
                 RunInfo info = runner.run(new StringData(a + "")).getRun();
-                logger.severe(info + "");
+                logger.info(info + "");
                 assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
                 a = (i - 13) * mb;
                 info = runner.run(new StringData(a + "")).getRun();
-                logger.severe(info + "");
+                logger.info(info + "");
                 assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
                 a = i * mb;
                 info = runner.run(new StringData(a + "")).getRun();
-                logger.severe(info + "");
+                logger.info(info + "");
                 assertTrue(info.getRunVerdict() == RunVerdict.MEMORY_LIMIT_EXCEEDED);
             }
         }

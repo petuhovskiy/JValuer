@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -27,7 +28,7 @@ public class NaiveInvoker implements Invoker {
             String args = options.getArgs();
             RunLimits limits = options.getLimits();
 
-            logger.info("Naive invoker: " + ((limits.getMemory() != null) && false ? "no memory limit" : limits.getMemory() + " bytes") +
+            logger.info("Naive invoker: " + "no memory limit" +
                     ", " + (limits.getTime() == null ? "no time limit" : limits.getTime() + " ms") + ", no process limit. " + options.getExe().toAbsolutePath());
 
 
@@ -51,7 +52,8 @@ public class NaiveInvoker implements Invoker {
             if (limits.getTime() != null) process.waitFor(limits.getTime(), TimeUnit.MILLISECONDS);
             else process.waitFor();
 
-            if (process.isAlive()) {
+            while (process.isAlive()) {
+                process.destroy();
                 process.destroyForcibly();
                 process.waitFor();
             }
@@ -60,18 +62,22 @@ public class NaiveInvoker implements Invoker {
 
             long time = endTime - invokeTime;
 
+            process.destroy();
+            process.destroyForcibly();
+            process.waitFor();
+
             RunVerdict verdict = RunVerdict.SUCCESS;
             if (limits.getTime() != null && time > limits.getTime()) verdict = RunVerdict.TIME_LIMIT_EXCEEDED;
 
             return RunInfo.completed(verdict, process.exitValue(), time, time, time, 0, "");
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, "", e);
             return RunInfo.crashed("wrong format");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, "", e);
             return RunInfo.crashed("executing exception");
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, "", e);
             return RunInfo.crashed("waiting interrupted");
         }
     }

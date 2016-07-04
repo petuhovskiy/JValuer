@@ -8,19 +8,17 @@ import com.petukhovsky.jvaluer.commons.run.InvocationResult;
 import com.petukhovsky.jvaluer.commons.run.RunInOut;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
-import com.petukhovsky.jvaluer.commons.util.FilesUtils;
 import com.petukhovsky.jvaluer.invoker.Invoker;
+import com.petukhovsky.jvaluer.util.FilesUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
-import java.util.Set;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Created by Arthur on 12/18/2015.
@@ -40,14 +38,16 @@ public class Runner implements Closeable, AutoCloseable {
     Runner(JValuer jValuer, Path dir, Path exe, RunOptions options, Invoker invoker, RunInOut inOut) {
         logger.fine("Creating runner with dir=" + dir + ", in=" + inOut.getIn() + ", out=" + inOut.getOut());
         this.dir = dir;
+        Local.chmod777(dir);
         this.executable = dir.resolve("solution" + jValuer.executableSuffix);
-        Local.chmod777(this.executable);
+
         try {
             Files.copy(exe, executable, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("can't copy specified exe");
+            logger.log(Level.SEVERE, "can't copy specified exe", e);
         }
+        Local.chmod777(this.executable);
+
         this.invoker = invoker;
         options = options.setExe(this.executable);
 
@@ -66,32 +66,6 @@ public class Runner implements Closeable, AutoCloseable {
                 break;
         }
         this.options = options;
-    }
-
-    private void clear(Path path, String... values) throws IOException {
-        Set<String> list = Arrays.stream(values).distinct().collect(Collectors.toSet());
-        Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                if (!(file.getParent().equals(path) && list.contains(file.getFileName().toString())))
-                    Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                if (!dir.equals(path)) Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            }
-        });
-    }
-
-    private void clearButExe() {
-        try {
-            clear(dir, executable.getFileName().toString());
-        } catch (IOException e) {
-            logger.log(Level.WARNING, "can't clear dir", e);
-        }
     }
 
     private InvocationResult run(RunOptions options) {
@@ -125,17 +99,31 @@ public class Runner implements Closeable, AutoCloseable {
     }
 
     private InvocationResult run(InputStream test, RunOptions options) {
-        clearButExe();
-        try (InputStream is = test) {
-            Files.copy(is, in, StandardCopyOption.REPLACE_EXISTING);
+        cleanDirectory();
+        try {
+            Files.copy(test, in, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             logger.log(Level.WARNING, "fail while copying", e);
+        } finally {
+            try {
+                test.close();
+            } catch (IOException e) {
+                logger.log(Level.WARNING, "can't close stream", e);
+            }
         }
         return run(options);
     }
 
+    private void cleanDirectory() {
+        try {
+            Files.list(dir).filter(path -> !path.equals(executable)).forEach(FilesUtils::delete);
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "can't list directory", e);
+        }
+    }
+
     @Override
     public void close() throws IOException {
-        FilesUtils.deleteDirectory(dir);
+        FilesUtils.delete(dir);
     }
 }

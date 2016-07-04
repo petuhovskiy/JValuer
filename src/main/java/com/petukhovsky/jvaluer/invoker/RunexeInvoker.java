@@ -65,7 +65,7 @@ public class RunexeInvoker implements Invoker {
 
             RunLimits limits = options.getLimits();
             if (limits.getMemory() != null) cmd += " -m " + limits.getMemory();
-            if (limits.getTime() != null) cmd += " -t " + limits.getTime();
+            if (limits.getTime() != null) cmd += " -t " + limits.getTime() + "ms";
 
             cmd += " \"" + options.getExe().toAbsolutePath() + "\" " + options.getArgs();
 
