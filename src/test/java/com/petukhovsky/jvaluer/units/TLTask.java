@@ -43,7 +43,7 @@ public class TLTask {
     @Test
     public void testRunexe() throws IOException {
         RunexeInvoker invoker = new RunexeInvoker();
-        if (!invoker.isSupported(jValuer)) {
+        if (!invoker.isAvailiable(jValuer)) {
             logger.info("Runexe tl test skip");
             return;
         }

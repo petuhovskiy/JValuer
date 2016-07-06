@@ -90,7 +90,7 @@ public class RunexeInvoker implements Invoker {
         }
     }
 
-    public boolean isSupported(JValuer jValuer) {
+    public boolean isAvailiable(JValuer jValuer) {
         return jValuer.getRunexe() != null;
     }
 }

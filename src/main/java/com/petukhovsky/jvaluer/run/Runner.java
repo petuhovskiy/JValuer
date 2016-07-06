@@ -38,7 +38,6 @@ public class Runner implements Closeable, AutoCloseable {
     Runner(JValuer jValuer, Path dir, Path exe, RunOptions options, Invoker invoker, RunInOut inOut) {
         logger.fine("Creating runner with dir=" + dir + ", in=" + inOut.getIn() + ", out=" + inOut.getOut());
         this.dir = dir;
-        Local.chmod777(dir);
         this.executable = dir.resolve("solution" + jValuer.executableSuffix);
 
         try {
@@ -124,6 +123,7 @@ public class Runner implements Closeable, AutoCloseable {
 
     @Override
     public void close() throws IOException {
-        FilesUtils.delete(dir);
+        FilesUtils.cleanDirectoryOld(dir);
+        Files.delete(dir);
     }
 }

@@ -42,7 +42,7 @@ public class MLTask {
     @Test
     public void testRunexe() throws IOException {
         RunexeInvoker invoker = new RunexeInvoker();
-        if (!invoker.isSupported(jValuer)) {
+        if (!invoker.isAvailiable(jValuer)) {
             logger.info("Runexe ml test skip");
             return;
         }

@@ -41,12 +41,13 @@ public class PlusTask {
         logger.info(result + "");
         assertTrue(result.isSuccess());
         exe = result.getExe();
+        System.gc();
     }
 
     @Test(timeout = 20000)
     public void testRunexe() throws IOException {
         RunexeInvoker invoker = new RunexeInvoker();
-        if (!invoker.isSupported(jValuer)) {
+        if (!invoker.isAvailiable(jValuer)) {
             logger.info("Runexe plustask test skip");
             return;
         }

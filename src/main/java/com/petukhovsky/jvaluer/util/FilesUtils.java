@@ -65,7 +65,7 @@ public class FilesUtils {
     }
 
     public static void cleanDirectory(Path dir) {
-        cleanDirectoryOld(dir);
+        FilesUtils.cleanDirectoryOld(dir);
         try {
             Files.list(dir).forEach(FilesUtils::delete);
         } catch (IOException e) {
