@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -28,16 +29,17 @@ public class TLTask {
     private JValuer jValuer;
 
     private Path source;
+    private Path source1;
     private Path exe;
+    private Path exe1;
 
     @Before
     public void loadResources() {
         this.jValuer = new JValuerTest().loadJValuer();
         this.source = jValuer.loadResource("tl.cpp", "/tl.cpp");
-        CompilationResult result = jValuer.compile(source);
-        logger.info(result + "");
-        assertTrue(result.isSuccess());
-        exe = result.getExe();
+        this.source1 = jValuer.loadResource(".cpp", "/whiletrue.cpp");
+        exe = Utils.compileAssert(jValuer, source);
+        exe1 = Utils.compileAssert(jValuer, source1);
     }
 
     @Test
@@ -53,6 +55,24 @@ public class TLTask {
                 .invoker(invoker)
                 .build(exe)) {
             tests(runner);
+        }
+    }
+
+    @Test
+    public void testRunexeWhileTrue() throws IOException {
+        RunexeInvoker invoker = new RunexeInvoker();
+        if (!invoker.isAvailiable(jValuer)) {
+            logger.info("Runexe while(true) test skip");
+            return;
+        }
+        for (int i = 0; i < 5; i++) {
+            try (Runner runner = jValuer.createRunner()
+                    .limits(RunLimits.ofTime(1000L))
+                    .trusted()
+                    .invoker(invoker)
+                    .build(exe)) {
+                assertEquals(runner.run(new StringData("")).getRun().getRunVerdict(), RunVerdict.TIME_LIMIT_EXCEEDED);
+            }
         }
     }
 

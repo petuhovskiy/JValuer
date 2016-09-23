@@ -115,15 +115,14 @@ public class Runner implements Closeable, AutoCloseable {
 
     private void cleanDirectory() {
         try {
-            Files.list(dir).filter(path -> !path.equals(executable)).forEach(FilesUtils::delete);
+            Files.list(dir).filter(path -> !path.equals(executable)).forEach(FilesUtils::removeRecursiveForce);
         } catch (IOException e) {
             logger.log(Level.WARNING, "can't list directory", e);
         }
     }
 
     @Override
-    public void close() throws IOException {
-        FilesUtils.cleanDirectoryOld(dir);
-        Files.delete(dir);
+    public void close() {
+        FilesUtils.removeRecursiveForce(dir);
     }
 }

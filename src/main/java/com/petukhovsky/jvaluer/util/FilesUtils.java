@@ -2,6 +2,7 @@ package com.petukhovsky.jvaluer.util;
 
 import com.petukhovsky.jvaluer.commons.local.OS;
 import org.apache.commons.io.FileDeleteStrategy;
+import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -19,32 +20,25 @@ public class FilesUtils {
 
     private final static Logger log = Logger.getLogger(FilesUtils.class.getName());
 
-    public static void delete(Path path) {
+    private static void delete(Path path) {
         if (Files.isDirectory(path)) {
-            if (OS.isWindows()) {
-                try {
-                    Runtime.getRuntime().exec("rmdir \"" + path.toAbsolutePath() + "\" /s /q").waitFor();
-                } catch (IOException | InterruptedException e) {
-                    log.log(Level.WARNING, "", e);
-                }
-            }
             cleanDirectoryOld(path);
             try {
                 Files.list(path).forEach(FilesUtils::delete);
             } catch (IOException e) {
-                log.log(Level.WARNING, "", e);
+                //log.log(Level.WARNING, "", e);
             }
         }
         if (Files.exists(path)) {
             try {
                 FileDeleteStrategy.FORCE.delete(path.toFile());
             } catch (IOException e) {
-                log.log(Level.WARNING, "", e);
+                //log.log(Level.WARNING, "", e);
             }
         }
     }
 
-    public static void cleanDirectoryOld(Path path) {
+    private static void cleanDirectoryOld(Path path) {
         try {
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                 @Override
@@ -60,16 +54,70 @@ public class FilesUtils {
                 }
             });
         } catch (IOException e) {
-            log.log(Level.WARNING, "can't clean directory", e);
+            //log.log(Level.WARNING, "can't clean directory", e);
         }
     }
 
-    public static void cleanDirectory(Path dir) {
+    private static void cleanDirectory(Path dir) {
         FilesUtils.cleanDirectoryOld(dir);
         try {
             Files.list(dir).forEach(FilesUtils::delete);
         } catch (IOException e) {
             log.log(Level.WARNING, "", e);
+        }
+    }
+
+    private static void myTryDelete(Path path) {
+        try {
+            FileUtils.forceDelete(path.toFile());
+        } catch (IOException e) {
+        }
+        FileUtils.deleteQuietly(path.toFile());
+        delete(path);
+    }
+
+    public static boolean removeRecursiveForce(Path path) {
+        for (int i = 0; i < 20; i++) {
+            if (Files.notExists(path)) return true;
+            myTryDelete(path);
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+            }
+        }
+        log.log(Level.SEVERE, "can't delete THAT -> (" + path.toAbsolutePath().toString() + ")");
+        return Files.notExists(path);
+    }
+
+    /**
+     * Works too well, but also kill current java program as side effect
+     * @param path
+     */
+    private static void killProcessesByPath(Path path) {
+        if (!OS.isUnix()) return;
+        String cmd = String.format("lsof | grep %s | awk '{print $2}' | xargs kill -9", path.toAbsolutePath().toString());
+        try {
+            Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", cmd}).waitFor();
+        } catch (InterruptedException | IOException e) {
+            //e.printStackTrace();
+        }
+    }
+
+    public static boolean assureEmptyDir(Path path) {
+        removeRecursiveForce(path);
+        if (!Files.exists(path) && forceCreateDirs(path)) {
+            return true;
+        }
+        log.log(Level.SEVERE, "can't make THAT -> (" + path.toAbsolutePath().toString() + ") directory empty");
+        return false;
+    }
+
+    private static boolean forceCreateDirs(Path path) {
+        try {
+            Files.createDirectories(path);
+            return true;
+        } catch (IOException e) {
+            return false;
         }
     }
 }

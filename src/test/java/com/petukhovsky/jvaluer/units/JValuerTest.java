@@ -31,7 +31,7 @@ public class JValuerTest {
                                 new CustomInvoker(new OSRelatedValue<String>()
                                         .windows("c:/Programs/Python-3/python.exe").orElse("python3"), "{exe} {args}")),
                         new String[]{"py"}, new String[]{"python", "py", "python3"})
-                .setPath(Paths.get("jvaluer-storage"))
+                .setPath(Paths.get("/data/jvaluer/tmp/"))
                 .build();
     }
 

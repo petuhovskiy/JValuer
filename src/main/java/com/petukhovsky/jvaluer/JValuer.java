@@ -45,24 +45,11 @@ public class JValuer {
     public JValuer(Languages languages, Path path) {
         this.languages = languages;
         this.path = path.toAbsolutePath();
-        try {
-            Files.createDirectories(path);
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "jvaluer folder creation", e);
-        }
-        FilesUtils.cleanDirectoryOld(path);
+        FilesUtils.assureEmptyDir(path);
         this.temp = path.resolve("temp");
         this.resources = path.resolve("resources");
-        try {
-            Files.createDirectories(temp);
-        } catch (IOException e) {
-            logger.log(Level.WARNING, "temp creating", e);
-        }
-        try {
-            Files.createDirectories(resources);
-        } catch (IOException e) {
-            logger.log(Level.WARNING, "resources creating", e);
-        }
+        FilesUtils.assureEmptyDir(temp);
+        FilesUtils.assureEmptyDir(resources);
         loadResources();
         loadInvoker();
     }

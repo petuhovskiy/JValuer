@@ -47,22 +47,23 @@ public class MLTask {
             return;
         }
         Random random = new Random();
-        final int mb = 1024 * 1024 / 4;
+        final long mb = 1024L * 1024;
+        final long intMB = mb / 4;
         for (int i = 64; i <= 256; i *= 2) {
             try (Runner runner = jValuer.createRunner()
                     .trusted()
                     .invoker(invoker)
-                    .limits(RunLimits.ofMemory(1024L * 1024 * i))
+                    .limits(RunLimits.ofMemory(mb * i))
                     .build(exe)) {
-                int a = 5 + random.nextInt(100);
+                long a = 5 + random.nextInt(100);
                 RunInfo info = runner.run(new StringData(a + "")).getRun();
                 logger.info(info + "");
                 assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
-                a = (i - 13) * mb;
+                a = (i / 2) * intMB;
                 info = runner.run(new StringData(a + "")).getRun();
                 logger.info(info + "");
                 assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
-                a = i * mb;
+                a = (i + i) * intMB;
                 info = runner.run(new StringData(a + "")).getRun();
                 logger.info(info + "");
                 assertTrue(info.getRunVerdict() == RunVerdict.MEMORY_LIMIT_EXCEEDED);
