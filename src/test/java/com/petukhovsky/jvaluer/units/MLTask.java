@@ -59,7 +59,7 @@ public class MLTask {
                 RunInfo info = runner.run(new StringData(a + "")).getRun();
                 logger.info(info + "");
                 assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
-                a = (i / 2) * intMB;
+                a = (i / 4) * intMB;
                 info = runner.run(new StringData(a + "")).getRun();
                 logger.info(info + "");
                 assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);

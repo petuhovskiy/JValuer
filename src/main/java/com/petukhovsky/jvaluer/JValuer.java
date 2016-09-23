@@ -15,6 +15,7 @@ import com.petukhovsky.jvaluer.lang.Language;
 import com.petukhovsky.jvaluer.lang.Languages;
 import com.petukhovsky.jvaluer.run.RunnerBuilder;
 import com.petukhovsky.jvaluer.util.FilesUtils;
+import org.apache.commons.io.FileSystemUtils;
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
@@ -77,11 +78,7 @@ public class JValuer {
     }
 
     public void cleanTemp() {
-        try {
-            FileUtils.cleanDirectory(temp.toFile());
-        } catch (IOException e) {
-            logger.log(Level.WARNING, "can't clean temp", e);
-        }
+        FilesUtils.assureEmptyDir(temp);
     }
 
     public Path createTempFile(String prefix, String suffix, FileAttribute<?>... attrs) {

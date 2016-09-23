@@ -58,15 +58,6 @@ public class FilesUtils {
         }
     }
 
-    private static void cleanDirectory(Path dir) {
-        FilesUtils.cleanDirectoryOld(dir);
-        try {
-            Files.list(dir).forEach(FilesUtils::delete);
-        } catch (IOException e) {
-            log.log(Level.WARNING, "", e);
-        }
-    }
-
     private static void myTryDelete(Path path) {
         try {
             FileUtils.forceDelete(path.toFile());
@@ -89,6 +80,37 @@ public class FilesUtils {
         return Files.notExists(path);
     }
 
+    public static boolean assureEmptyDir(Path path) {
+        if (Files.exists(path) && Files.isDirectory(path)) {
+            return cleanDirectory(path);
+        }
+        removeRecursiveForce(path);
+        if (!Files.exists(path) && forceCreateDirs(path)) {
+            return true;
+        }
+        log.log(Level.SEVERE, "can't make THAT -> (" + path.toAbsolutePath().toString() + ") directory empty");
+        return false;
+    }
+
+    private static boolean cleanDirectory(Path path) {
+        final boolean[] ok = {true};
+        try {
+            Files.list(path).forEach(child -> ok[0] &= removeRecursiveForce(child));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ok[0];
+    }
+
+    private static boolean forceCreateDirs(Path path) {
+        try {
+            Files.createDirectories(path);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
     /**
      * Works too well, but also kill current java program as side effect
      * @param path
@@ -100,24 +122,6 @@ public class FilesUtils {
             Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", cmd}).waitFor();
         } catch (InterruptedException | IOException e) {
             //e.printStackTrace();
-        }
-    }
-
-    public static boolean assureEmptyDir(Path path) {
-        removeRecursiveForce(path);
-        if (!Files.exists(path) && forceCreateDirs(path)) {
-            return true;
-        }
-        log.log(Level.SEVERE, "can't make THAT -> (" + path.toAbsolutePath().toString() + ") directory empty");
-        return false;
-    }
-
-    private static boolean forceCreateDirs(Path path) {
-        try {
-            Files.createDirectories(path);
-            return true;
-        } catch (IOException e) {
-            return false;
         }
     }
 }
