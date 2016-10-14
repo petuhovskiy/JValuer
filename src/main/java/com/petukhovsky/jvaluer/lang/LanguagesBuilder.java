@@ -1,5 +1,8 @@
 package com.petukhovsky.jvaluer.lang;
 
+import com.petukhovsky.jvaluer.commons.lang.Language;
+import com.petukhovsky.jvaluer.commons.lang.Languages;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +24,7 @@ public class LanguagesBuilder {
     }
 
     public Languages build() {
-        return new Languages(names, exts, list);
+        return new LanguagesImpl(names, exts, list);
     }
 
     public LanguagesBuilder addLanguage(Language language, String[] ext, String[] name) {

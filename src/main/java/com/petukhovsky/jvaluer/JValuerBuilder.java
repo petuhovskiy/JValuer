@@ -1,6 +1,7 @@
 package com.petukhovsky.jvaluer;
 
-import com.petukhovsky.jvaluer.lang.Language;
+import com.petukhovsky.jvaluer.commons.lang.Language;
+import com.petukhovsky.jvaluer.impl.JValuerImpl;
 import com.petukhovsky.jvaluer.lang.LanguagesBuilder;
 
 import java.nio.file.Path;
@@ -30,7 +31,7 @@ public class JValuerBuilder {
 
     public JValuer build() {
         if (path == null) throw new RuntimeException("Path is missing");
-        return new JValuer(languagesBuilder.build(), path);
+        return new JValuerImpl(languagesBuilder.build(), path);
     }
 
 }

@@ -6,10 +6,11 @@ import com.petukhovsky.jvaluer.commons.checker.Checker;
 import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.commons.data.StringData;
 import com.petukhovsky.jvaluer.commons.data.TestData;
+import com.petukhovsky.jvaluer.commons.lang.Language;
 import com.petukhovsky.jvaluer.commons.run.InvocationResult;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
-import com.petukhovsky.jvaluer.lang.Language;
 import com.petukhovsky.jvaluer.run.Runner;
+import com.petukhovsky.jvaluer.run.RunnerBuilder;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class RunnableChecker extends Checker implements Closeable, AutoCloseable
         CompilationResult result = jValuer.compile(language, source);
         if (!result.isSuccess()) throw new RuntimeException("Can't compile checker:\n" + result.getComment());
         this.exe = result.getExe();
-        this.runner = jValuer.createRunner().limits(limits).invoker(language.invoker()).build(exe);
+        this.runner = new RunnerBuilder(jValuer).limits(limits).invoker(language.invoker()).build(exe);
     }
 
     public RunnableChecker(JValuer jValuer, Path source, Language language) {

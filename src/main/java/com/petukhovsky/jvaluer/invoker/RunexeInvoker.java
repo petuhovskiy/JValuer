@@ -1,6 +1,7 @@
 package com.petukhovsky.jvaluer.invoker;
 
 import com.petukhovsky.jvaluer.JValuer;
+import com.petukhovsky.jvaluer.commons.invoker.Invoker;
 import com.petukhovsky.jvaluer.commons.local.Local;
 import com.petukhovsky.jvaluer.commons.local.OS;
 import com.petukhovsky.jvaluer.commons.local.UserAccount;
@@ -39,13 +40,14 @@ public class RunexeInvoker implements Invoker {
         logger.fine("Runexe invoker dom builder static init complete");
     }
 
+    private final Path runexe;
 
-    public RunexeInvoker() {
+    public RunexeInvoker(Path runexe) {
+        this.runexe = runexe;
     }
 
     @Override
     public RunInfo run(JValuer jValuer, RunOptions options) {
-        Path runexe = jValuer.getRunexe();
         try {
             String cmd = String.format("%s -xml", runexe);
 
@@ -88,9 +90,5 @@ public class RunexeInvoker implements Invoker {
             logger.log(Level.SEVERE, "run is crashed", e);
             return RunInfo.crashed("Crashed while invoking");
         }
-    }
-
-    public boolean isAvailiable(JValuer jValuer) {
-        return jValuer.getRunexe() != null;
     }
 }

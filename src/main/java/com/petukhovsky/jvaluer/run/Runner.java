@@ -3,12 +3,13 @@ package com.petukhovsky.jvaluer.run;
 import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.commons.data.PathData;
 import com.petukhovsky.jvaluer.commons.data.TestData;
+import com.petukhovsky.jvaluer.commons.invoker.Invoker;
 import com.petukhovsky.jvaluer.commons.local.Local;
+import com.petukhovsky.jvaluer.commons.local.OSRelatedValue;
 import com.petukhovsky.jvaluer.commons.run.InvocationResult;
 import com.petukhovsky.jvaluer.commons.run.RunInOut;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
-import com.petukhovsky.jvaluer.invoker.Invoker;
 import com.petukhovsky.jvaluer.util.FilesUtils;
 
 import java.io.Closeable;
@@ -38,7 +39,7 @@ public class Runner implements Closeable, AutoCloseable {
     Runner(JValuer jValuer, Path dir, Path exe, RunOptions options, Invoker invoker, RunInOut inOut) {
         logger.fine("Creating runner with dir=" + dir + ", in=" + inOut.getIn() + ", out=" + inOut.getOut());
         this.dir = dir;
-        this.executable = dir.resolve("solution" + jValuer.executableSuffix);
+        this.executable = dir.resolve("solution" + new OSRelatedValue<String>().windows(".exe").orElse(".out"));
 
         try {
             Files.copy(exe, executable, StandardCopyOption.REPLACE_EXISTING);

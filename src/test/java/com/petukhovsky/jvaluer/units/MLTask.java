@@ -3,6 +3,7 @@ package com.petukhovsky.jvaluer.units;
 import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.commons.data.StringData;
+import com.petukhovsky.jvaluer.commons.invoker.Invoker;
 import com.petukhovsky.jvaluer.commons.run.RunInfo;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunVerdict;
@@ -41,8 +42,8 @@ public class MLTask {
 
     @Test
     public void testRunexe() throws IOException {
-        RunexeInvoker invoker = new RunexeInvoker();
-        if (!invoker.isAvailiable(jValuer)) {
+        Invoker invoker = jValuer.builtin().invoker("runexe");
+        if (invoker == null) {
             logger.info("Runexe ml test skip");
             return;
         }

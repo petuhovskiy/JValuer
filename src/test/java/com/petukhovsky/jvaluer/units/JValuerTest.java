@@ -4,10 +4,11 @@ import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.JValuerBuilder;
 import com.petukhovsky.jvaluer.commons.compiler.CloneCompiler;
 import com.petukhovsky.jvaluer.commons.compiler.RunnableCompiler;
+import com.petukhovsky.jvaluer.commons.lang.Language;
+import com.petukhovsky.jvaluer.commons.lang.Languages;
 import com.petukhovsky.jvaluer.commons.local.OSRelatedValue;
 import com.petukhovsky.jvaluer.invoker.CustomInvoker;
-import com.petukhovsky.jvaluer.lang.Language;
-import com.petukhovsky.jvaluer.lang.Languages;
+import com.petukhovsky.jvaluer.lang.LanguagesImpl;
 import org.junit.Before;
 import org.junit.Test;
 

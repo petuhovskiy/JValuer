@@ -1,5 +1,8 @@
 package com.petukhovsky.jvaluer.lang;
 
+import com.petukhovsky.jvaluer.commons.lang.Language;
+import com.petukhovsky.jvaluer.commons.lang.Languages;
+
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -7,12 +10,12 @@ import java.util.Map;
 /**
  * Created by Arthur Petukhovsky on 5/21/2016.
  */
-public class Languages {
+public class LanguagesImpl implements Languages {
     private final Map<String, Language> names;
     private final Map<String, Language> exts;
     private final List<Language> all;
 
-    public Languages(Map<String, Language> names, Map<String, Language> exts, List<Language> all) {
+    public LanguagesImpl(Map<String, Language> names, Map<String, Language> exts, List<Language> all) {
         this.names = names;
         this.exts = exts;
         this.all = all;

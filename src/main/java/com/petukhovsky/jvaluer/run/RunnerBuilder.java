@@ -1,12 +1,12 @@
 package com.petukhovsky.jvaluer.run;
 
 import com.petukhovsky.jvaluer.JValuer;
+import com.petukhovsky.jvaluer.commons.invoker.Invoker;
 import com.petukhovsky.jvaluer.commons.local.UserAccount;
 import com.petukhovsky.jvaluer.commons.run.RunInOut;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
 import com.petukhovsky.jvaluer.invoker.DefaultInvoker;
-import com.petukhovsky.jvaluer.invoker.Invoker;
 
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -24,8 +24,8 @@ public class RunnerBuilder {
     private Invoker invoker;
     private RunInOut inOut;
 
-    public RunnerBuilder(Path dir, JValuer jValuer) {
-        this.dir = dir;
+    public RunnerBuilder(JValuer jValuer) {
+        this.dir = jValuer.createTempDir();
         this.jValuer = jValuer;
         this.options = new RunOptions().setFolder(dir);
         this.invoker = new DefaultInvoker();
