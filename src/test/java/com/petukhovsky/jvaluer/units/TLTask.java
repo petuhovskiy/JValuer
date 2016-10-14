@@ -3,12 +3,15 @@ package com.petukhovsky.jvaluer.units;
 import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.commons.data.StringData;
+import com.petukhovsky.jvaluer.commons.invoker.Invoker;
 import com.petukhovsky.jvaluer.commons.run.RunInfo;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunVerdict;
+import com.petukhovsky.jvaluer.commons.source.Source;
 import com.petukhovsky.jvaluer.invoker.NaiveInvoker;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
 import com.petukhovsky.jvaluer.run.Runner;
+import com.petukhovsky.jvaluer.run.RunnerBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,28 +31,28 @@ public class TLTask {
 
     private JValuer jValuer;
 
-    private Path source;
-    private Path source1;
+    private Source source;
+    private Source source1;
     private Path exe;
     private Path exe1;
 
     @Before
     public void loadResources() {
         this.jValuer = new JValuerTest().loadJValuer();
-        this.source = jValuer.loadResource("tl.cpp", "/tl.cpp");
-        this.source1 = jValuer.loadResource(".cpp", "/whiletrue.cpp");
+        this.source = jValuer.getLanguages().autoSource(jValuer.loadResource("tl.cpp", "/tl.cpp"));
+        this.source1 = jValuer.getLanguages().autoSource(jValuer.loadResource(".cpp", "/whiletrue.cpp"));
         exe = Utils.compileAssert(jValuer, source);
         exe1 = Utils.compileAssert(jValuer, source1);
     }
 
     @Test
     public void testRunexe() throws IOException {
-        RunexeInvoker invoker = new RunexeInvoker();
-        if (!invoker.isAvailiable(jValuer)) {
+        Invoker invoker = jValuer.builtin().invoker("runexe");
+        if (invoker == null) {
             logger.info("Runexe tl test skip");
             return;
         }
-        try (Runner runner = jValuer.createRunner()
+        try (Runner runner = new RunnerBuilder(jValuer)
                 .limits(RunLimits.ofTime(1000L))
                 .trusted()
                 .invoker(invoker)
@@ -60,13 +63,13 @@ public class TLTask {
 
     @Test
     public void testRunexeWhileTrue() throws IOException {
-        RunexeInvoker invoker = new RunexeInvoker();
-        if (!invoker.isAvailiable(jValuer)) {
-            logger.info("Runexe while(true) test skip");
+        Invoker invoker = jValuer.builtin().invoker("runexe");
+        if (invoker == null) {
+            logger.info("Runexe tl test skip");
             return;
         }
         for (int i = 0; i < 5; i++) {
-            try (Runner runner = jValuer.createRunner()
+            try (Runner runner = new RunnerBuilder(jValuer)
                     .limits(RunLimits.ofTime(1000L))
                     .trusted()
                     .invoker(invoker)
@@ -78,7 +81,7 @@ public class TLTask {
 
     @Test
     public void testNaive() throws IOException {
-        try (Runner runner = jValuer.createRunner()
+        try (Runner runner = new RunnerBuilder(jValuer)
                 .limits(RunLimits.ofTime(1000L))
                 .invoker(new NaiveInvoker())
                 .build(exe)) {

@@ -3,12 +3,15 @@ package com.petukhovsky.jvaluer.units;
 import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.commons.data.StringData;
+import com.petukhovsky.jvaluer.commons.invoker.Invoker;
 import com.petukhovsky.jvaluer.commons.local.OSRelatedValue;
 import com.petukhovsky.jvaluer.commons.run.RunInfo;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunVerdict;
+import com.petukhovsky.jvaluer.commons.source.Source;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
 import com.petukhovsky.jvaluer.run.Runner;
+import com.petukhovsky.jvaluer.run.RunnerBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,13 +30,13 @@ public class SecurityViolationTest {
 
     private JValuer jValuer;
 
-    private Path source;
+    private Source source;
     private Path exe;
 
     @Before
     public void loadResources() {
         this.jValuer = new JValuerTest().loadJValuer();
-        this.source = jValuer.loadResource("security_violation.cpp", "/security_violation.cpp");
+        this.source = jValuer.getLanguages().autoSource(jValuer.loadResource("security_violation.cpp", "/security_violation.cpp"));
         CompilationResult result = jValuer.compile(source);
         logger.info(result + "");
         assertTrue(result.isSuccess());
@@ -42,13 +45,13 @@ public class SecurityViolationTest {
 
     @Test
     public void testRunexeLinux() throws IOException {
-        RunexeInvoker invoker = new RunexeInvoker();
-        if (new OSRelatedValue<Boolean>().windows(true).unix(false).orElse(true)) {
+        Invoker invoker = jValuer.builtin().invoker("runexe");
+        if (invoker == null) {
             logger.info("Runexe security violation test skip");
             return;
         }
         //requires user with low permissions
-        try (Runner runner = jValuer.createRunner()
+        try (Runner runner = new RunnerBuilder(jValuer)
                 .limits(RunLimits.ofTime(1000L))
                 .invoker(invoker)
                 .build(exe)) {

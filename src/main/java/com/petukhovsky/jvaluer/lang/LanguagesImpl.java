@@ -2,6 +2,7 @@ package com.petukhovsky.jvaluer.lang;
 
 import com.petukhovsky.jvaluer.commons.lang.Language;
 import com.petukhovsky.jvaluer.commons.lang.Languages;
+import com.petukhovsky.jvaluer.commons.source.Source;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -34,6 +35,13 @@ public class LanguagesImpl implements Languages {
         int pos = name.lastIndexOf('.');
         if (pos == -1) return null;
         return findByExtension(name.substring(pos + 1));
+    }
+
+    @Override
+    public Source autoSource(Path path) {
+        Language lang = findByPath(path);
+        if (lang == null) throw new RuntimeException("unknown language exception");
+        return new Source(path, lang);
     }
 
     public List<Language> getAll() {

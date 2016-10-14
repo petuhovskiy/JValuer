@@ -2,6 +2,7 @@ package com.petukhovsky.jvaluer.units;
 
 import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.commons.source.Source;
 
 import java.nio.file.Path;
 import java.util.logging.Logger;
@@ -14,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class Utils {
     private static final Logger logger = Logger.getLogger(Utils.class.getName());
 
-    public static Path compileAssert(JValuer jValuer, Path source) {
+    public static Path compileAssert(JValuer jValuer, Source source) {
         CompilationResult result = jValuer.compile(source);
         logger.info(result.toString());
         assertTrue(result.isSuccess());

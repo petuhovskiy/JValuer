@@ -7,8 +7,10 @@ import com.petukhovsky.jvaluer.commons.invoker.Invoker;
 import com.petukhovsky.jvaluer.commons.run.RunInfo;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunVerdict;
+import com.petukhovsky.jvaluer.commons.source.Source;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
 import com.petukhovsky.jvaluer.run.Runner;
+import com.petukhovsky.jvaluer.run.RunnerBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,13 +29,13 @@ public class MLTask {
 
     private JValuer jValuer;
 
-    private Path source;
+    private Source source;
     private Path exe;
 
     @Before
     public void loadResources() {
         this.jValuer = new JValuerTest().loadJValuer();
-        this.source = jValuer.loadResource("ml.cpp", "/ml.cpp");
+        this.source = jValuer.getLanguages().autoSource(jValuer.loadResource("ml.cpp", "/ml.cpp"));
         CompilationResult result = jValuer.compile(source);
         logger.info(result + "");
         assertTrue(result.isSuccess());
@@ -51,7 +53,7 @@ public class MLTask {
         final long mb = 1024L * 1024;
         final long intMB = mb / 4;
         for (int i = 64; i <= 256; i *= 2) {
-            try (Runner runner = jValuer.createRunner()
+            try (Runner runner = new RunnerBuilder(jValuer)
                     .trusted()
                     .invoker(invoker)
                     .limits(RunLimits.ofMemory(mb * i))

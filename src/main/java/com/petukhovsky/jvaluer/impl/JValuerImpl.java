@@ -144,6 +144,6 @@ public class JValuerImpl implements JValuer {
 
     @Override
     public JValuerBuiltin builtin() {
-        return null;
+        return builtin;
     }
 }
