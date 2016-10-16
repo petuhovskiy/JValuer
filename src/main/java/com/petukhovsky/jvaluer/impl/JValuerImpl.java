@@ -88,7 +88,7 @@ public class JValuerImpl implements JValuer {
         try {
             return Files.createTempFile(temp, prefix, suffix, attrs);
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "cannot create temp file", e);
+            logger.log(Level.SEVERE, "can't create temp file", e);
         }
         return null;
     }
@@ -105,7 +105,7 @@ public class JValuerImpl implements JValuer {
         try {
             return Files.createTempDirectory(temp, "dir");
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "cannot create temp directory", e);
+            logger.log(Level.SEVERE, "can't create temp directory", e);
         }
         return null;
     }

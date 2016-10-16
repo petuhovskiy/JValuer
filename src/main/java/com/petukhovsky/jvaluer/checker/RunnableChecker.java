@@ -9,6 +9,7 @@ import com.petukhovsky.jvaluer.commons.data.TestData;
 import com.petukhovsky.jvaluer.commons.lang.Language;
 import com.petukhovsky.jvaluer.commons.run.InvocationResult;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
+import com.petukhovsky.jvaluer.commons.source.Source;
 import com.petukhovsky.jvaluer.run.Runner;
 import com.petukhovsky.jvaluer.run.RunnerBuilder;
 
@@ -26,20 +27,20 @@ public class RunnableChecker extends Checker implements Closeable, AutoCloseable
 
     private final JValuer jValuer;
 
-    public RunnableChecker(JValuer jValuer, Path source, Language language, RunLimits limits) {
+    public RunnableChecker(JValuer jValuer, Source source, RunLimits limits) {
         this.jValuer = jValuer;
-        CompilationResult result = jValuer.compile(language, source);
+        CompilationResult result = jValuer.compile(source);
         if (!result.isSuccess()) throw new RuntimeException("Can't compile checker:\n" + result.getComment());
         this.exe = result.getExe();
-        this.runner = new RunnerBuilder(jValuer).limits(limits).invoker(language.invoker()).build(exe);
+        this.runner = new RunnerBuilder(jValuer).limits(limits).build(exe, source);
     }
 
-    public RunnableChecker(JValuer jValuer, Path source, Language language) {
-        this(jValuer, source, language, new RunLimits(10000L, 1024L * 1024 * 512));
+    public RunnableChecker(JValuer jValuer, Source source) {
+        this(jValuer, source, new RunLimits(10000L, 1024L * 1024 * 512));
     }
 
     public RunnableChecker(JValuer jValuer, Path source) {
-        this(jValuer, source, jValuer.getLanguages().findByPath(source));
+        this(jValuer, jValuer.getLanguages().autoSource(source));
     }
 
     @Override

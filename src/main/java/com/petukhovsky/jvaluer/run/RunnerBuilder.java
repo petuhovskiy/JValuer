@@ -1,16 +1,20 @@
 package com.petukhovsky.jvaluer.run;
 
 import com.petukhovsky.jvaluer.JValuer;
+import com.petukhovsky.jvaluer.commons.exe.Executable;
 import com.petukhovsky.jvaluer.commons.invoker.Invoker;
+import com.petukhovsky.jvaluer.commons.lang.Language;
 import com.petukhovsky.jvaluer.commons.local.UserAccount;
 import com.petukhovsky.jvaluer.commons.run.RunInOut;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
+import com.petukhovsky.jvaluer.commons.source.Source;
 import com.petukhovsky.jvaluer.invoker.DefaultInvoker;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Arthur Petukhovsky on 5/21/2016.
@@ -21,14 +25,12 @@ public class RunnerBuilder {
     private final JValuer jValuer;
     private final Map<String, Object> custom;
     private RunOptions options;
-    private Invoker invoker;
     private RunInOut inOut;
 
     public RunnerBuilder(JValuer jValuer) {
         this.dir = jValuer.createTempDir();
         this.jValuer = jValuer;
         this.options = new RunOptions().setFolder(dir);
-        this.invoker = new DefaultInvoker();
         this.inOut = RunInOut.std();
         this.custom = new HashMap<>();
     }
@@ -57,10 +59,6 @@ public class RunnerBuilder {
         return trusted(true);
     }
 
-    public RunnerBuilder invoker(Invoker invoker) {
-        this.invoker = invoker;
-        return this;
-    }
 
     public RunnerBuilder injectDll(Path dll) {
         this.options = this.options.setDllInject(dll);
@@ -77,7 +75,21 @@ public class RunnerBuilder {
         return this;
     }
 
-    public Runner build(Path exe) {
+    public Runner build(Executable exe) {
+        return build(exe.getPath(), exe.getInvoker());
+    }
+
+    public Runner build(Path exe, Invoker invoker) {
+        Objects.requireNonNull(exe);
+        Objects.requireNonNull(invoker);
         return new Runner(jValuer, dir, exe, options.setCustom(custom), invoker, inOut);
+    }
+
+    public Runner build(Path exe, Language language) {
+        return build(exe, language.invoker());
+    }
+
+    public Runner build(Path exe, Source source) {
+        return build(exe, source.getLanguage());
     }
 }

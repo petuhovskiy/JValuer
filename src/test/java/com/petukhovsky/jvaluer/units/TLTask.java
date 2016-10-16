@@ -55,8 +55,7 @@ public class TLTask {
         try (Runner runner = new RunnerBuilder(jValuer)
                 .limits(RunLimits.ofTime(1000L))
                 .trusted()
-                .invoker(invoker)
-                .build(exe)) {
+                .build(exe, invoker)) {
             tests(runner);
         }
     }
@@ -72,8 +71,7 @@ public class TLTask {
             try (Runner runner = new RunnerBuilder(jValuer)
                     .limits(RunLimits.ofTime(1000L))
                     .trusted()
-                    .invoker(invoker)
-                    .build(exe)) {
+                    .build(exe, invoker)) {
                 assertEquals(runner.run(new StringData("")).getRun().getRunVerdict(), RunVerdict.TIME_LIMIT_EXCEEDED);
             }
         }
@@ -83,8 +81,7 @@ public class TLTask {
     public void testNaive() throws IOException {
         try (Runner runner = new RunnerBuilder(jValuer)
                 .limits(RunLimits.ofTime(1000L))
-                .invoker(new NaiveInvoker())
-                .build(exe)) {
+                .build(exe, new NaiveInvoker())) {
             tests(runner);
         }
     }

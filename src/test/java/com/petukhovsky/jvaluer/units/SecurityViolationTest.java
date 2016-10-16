@@ -53,8 +53,7 @@ public class SecurityViolationTest {
         //requires user with low permissions
         try (Runner runner = new RunnerBuilder(jValuer)
                 .limits(RunLimits.ofTime(1000L))
-                .invoker(invoker)
-                .build(exe)) {
+                .build(exe, invoker)) {
             tests(runner);
         }
     }

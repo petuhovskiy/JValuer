@@ -55,9 +55,8 @@ public class MLTask {
         for (int i = 64; i <= 256; i *= 2) {
             try (Runner runner = new RunnerBuilder(jValuer)
                     .trusted()
-                    .invoker(invoker)
                     .limits(RunLimits.ofMemory(mb * i))
-                    .build(exe)) {
+                    .build(exe, invoker)) {
                 long a = 5 + random.nextInt(100);
                 RunInfo info = runner.run(new StringData(a + "")).getRun();
                 logger.info(info + "");

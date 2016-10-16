@@ -57,8 +57,7 @@ public class PlusTask {
         try (Runner runner = new RunnerBuilder(jValuer)
                 .inOut(RunInOut.txt())
                 .trusted()
-                .invoker(invoker)
-                .build(exe)) {
+                .build(exe, invoker)) {
             tests20(runner);
         }
     }
@@ -68,8 +67,7 @@ public class PlusTask {
         try (Runner runner = new RunnerBuilder(jValuer)
                 .inOut(RunInOut.txt())
                 .trusted()
-                .invoker(new NaiveInvoker())
-                .build(exe)) {
+                .build(exe, new NaiveInvoker())) {
             tests20(runner);
         }
     }
