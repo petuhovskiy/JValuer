@@ -79,10 +79,10 @@ public class RunexeInvoker implements Invoker {
             Document doc = builder.parse(process.getInputStream());
             String verdict = doc.getElementsByTagName("invocationVerdict").item(0).getTextContent();
             int exitCode = Integer.parseInt(doc.getElementsByTagName("exitCode").item(0).getTextContent());
-            long userTime = Integer.parseInt(doc.getElementsByTagName("processorUserModeTime").item(0).getTextContent());
-            long kernelTime = Integer.parseInt(doc.getElementsByTagName("processorKernelModeTime").item(0).getTextContent());
-            long passedTime = Integer.parseInt(doc.getElementsByTagName("passedTime").item(0).getTextContent());
-            long consumedMemory = Integer.parseInt(doc.getElementsByTagName("consumedMemory").item(0).getTextContent());
+            long userTime = Long.parseLong(doc.getElementsByTagName("processorUserModeTime").item(0).getTextContent());
+            long kernelTime = Long.parseLong(doc.getElementsByTagName("processorKernelModeTime").item(0).getTextContent());
+            long passedTime = Long.parseLong(doc.getElementsByTagName("passedTime").item(0).getTextContent());
+            long consumedMemory = Long.parseLong(doc.getElementsByTagName("consumedMemory").item(0).getTextContent());
             String comment = doc.getElementsByTagName("comment").item(0).getTextContent();
 
             return RunInfo.completed(RunVerdict.valueOf(verdict), exitCode, userTime, kernelTime, passedTime, consumedMemory, comment);
