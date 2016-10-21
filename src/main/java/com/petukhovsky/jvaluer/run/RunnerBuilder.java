@@ -75,6 +75,14 @@ public class RunnerBuilder {
         return this;
     }
 
+    public SafeRunner buildSafe(Executable executable) {
+        Path exe = executable.getPath();
+        Invoker invoker = executable.getInvoker();
+        Objects.requireNonNull(exe);
+        Objects.requireNonNull(invoker);
+        return new SafeRunner(jValuer, dir, exe, options.setCustom(custom), invoker, inOut);
+    }
+
     public Runner build(Executable exe) {
         return build(exe.getPath(), exe.getInvoker());
     }
