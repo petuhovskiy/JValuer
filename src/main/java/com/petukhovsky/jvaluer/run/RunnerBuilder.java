@@ -21,16 +21,14 @@ import java.util.Objects;
  */
 public class RunnerBuilder {
 
-    private final Path dir;
     private final JValuer jValuer;
     private final Map<String, Object> custom;
     private RunOptions options;
     private RunInOut inOut;
 
     public RunnerBuilder(JValuer jValuer) {
-        this.dir = jValuer.createTempDir();
         this.jValuer = jValuer;
-        this.options = new RunOptions().setFolder(dir);
+        this.options = new RunOptions();
         this.inOut = RunInOut.std();
         this.custom = new HashMap<>();
     }
@@ -80,7 +78,7 @@ public class RunnerBuilder {
         Invoker invoker = executable.getInvoker();
         Objects.requireNonNull(exe);
         Objects.requireNonNull(invoker);
-        return new SafeRunner(jValuer, dir, exe, options.setCustom(custom), invoker, inOut);
+        return new SafeRunner(jValuer, exe, options.setCustom(custom), invoker, inOut);
     }
 
     public Runner build(Executable exe) {
@@ -90,6 +88,7 @@ public class RunnerBuilder {
     public Runner build(Path exe, Invoker invoker) {
         Objects.requireNonNull(exe);
         Objects.requireNonNull(invoker);
+        Path dir = jValuer.createTempDir();
         return new Runner(jValuer, dir, exe, options.setCustom(custom), invoker, inOut);
     }
 

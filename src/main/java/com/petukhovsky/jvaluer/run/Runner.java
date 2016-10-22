@@ -65,7 +65,7 @@ public class Runner implements Closeable, AutoCloseable {
                 options = options.setStderrForward(this.out);
                 break;
         }
-        this.options = options;
+        this.options = options.setFolder(dir);
     }
 
     private InvocationResult run(RunOptions options) {

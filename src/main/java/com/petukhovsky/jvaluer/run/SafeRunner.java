@@ -29,15 +29,13 @@ public class SafeRunner {
     private final static Logger logger = Logger.getLogger(SafeRunner.class.getName());
 
     private final JValuer jValuer;
-    private final Path dir;
     private final Path exe;
     private final RunOptions options;
     private final Invoker invoker;
     private final RunInOut inOut;
 
-    SafeRunner(JValuer jValuer, Path dir, Path exe, RunOptions options, Invoker invoker, RunInOut inOut) {
+    SafeRunner(JValuer jValuer, Path exe, RunOptions options, Invoker invoker, RunInOut inOut) {
         this.jValuer = jValuer;
-        this.dir = dir;
         this.exe = exe;
         this.options = options;
         this.invoker = invoker;
@@ -45,7 +43,7 @@ public class SafeRunner {
     }
 
     private Runner createRunner() {
-        return new Runner(jValuer, dir, exe, options, invoker, inOut);
+        return new Runner(jValuer, jValuer.createTempDir(), exe, options, invoker, inOut);
     }
 
     private Path createTempOut() {
