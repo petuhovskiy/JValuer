@@ -1,6 +1,7 @@
 package com.petukhovsky.jvaluer;
 
 import com.petukhovsky.jvaluer.commons.lang.Language;
+import com.petukhovsky.jvaluer.commons.local.UserAccount;
 import com.petukhovsky.jvaluer.impl.JValuerImpl;
 import com.petukhovsky.jvaluer.lang.LanguagesBuilder;
 
@@ -13,6 +14,7 @@ public class JValuerBuilder {
 
     LanguagesBuilder languagesBuilder;
     Path path;
+    UserAccount defaultAccount;
 
     public JValuerBuilder() {
         languagesBuilder = new LanguagesBuilder();
@@ -29,9 +31,14 @@ public class JValuerBuilder {
         return this;
     }
 
+    public JValuerBuilder setAccount(UserAccount account) {
+        this.defaultAccount = account;
+        return this;
+    }
+
     public JValuer build() {
         if (path == null) throw new RuntimeException("Path is missing");
-        return new JValuerImpl(languagesBuilder.build(), path);
+        return new JValuerImpl(languagesBuilder.build(), path, defaultAccount);
     }
 
 }

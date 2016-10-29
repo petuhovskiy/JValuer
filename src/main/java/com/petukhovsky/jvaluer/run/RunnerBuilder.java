@@ -9,6 +9,7 @@ import com.petukhovsky.jvaluer.commons.run.RunInOut;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
 import com.petukhovsky.jvaluer.commons.source.Source;
+import com.petukhovsky.jvaluer.impl.JValuerImpl;
 import com.petukhovsky.jvaluer.invoker.DefaultInvoker;
 
 import java.nio.file.Path;
@@ -31,6 +32,7 @@ public class RunnerBuilder {
         this.options = new RunOptions();
         this.inOut = RunInOut.std();
         this.custom = new HashMap<>();
+        if (jValuer instanceof JValuerImpl) account(((JValuerImpl) jValuer).getDefaultAccount());
     }
 
     public RunnerBuilder custom(String key, Object value) {

@@ -10,6 +10,7 @@ import com.petukhovsky.jvaluer.commons.lang.Languages;
 import com.petukhovsky.jvaluer.commons.local.Local;
 import com.petukhovsky.jvaluer.commons.local.OSRelatedSupplier;
 import com.petukhovsky.jvaluer.commons.local.OSRelatedValue;
+import com.petukhovsky.jvaluer.commons.local.UserAccount;
 import com.petukhovsky.jvaluer.commons.run.RunInfo;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
 import com.petukhovsky.jvaluer.commons.source.Source;
@@ -36,14 +37,16 @@ public class JValuerImpl implements JValuer {
     private final Languages languages;
 
     private final Path path;
+    private final UserAccount defaultAccount;
     private final Path temp;
     private final Path resources;
 
     private final JValuerBuiltin builtin;
 
-    public JValuerImpl(Languages languages, Path path) {
+    public JValuerImpl(Languages languages, Path path, UserAccount defaultAccount) {
         this.languages = languages;
         this.path = path;
+        this.defaultAccount = defaultAccount;
         FilesUtils.assureEmptyDir(path);
         this.temp = path.resolve("temp");
         this.resources = path.resolve("resources");
@@ -146,5 +149,9 @@ public class JValuerImpl implements JValuer {
     @Override
     public JValuerBuiltin builtin() {
         return builtin;
+    }
+
+    public UserAccount getDefaultAccount() {
+        return defaultAccount;
     }
 }
