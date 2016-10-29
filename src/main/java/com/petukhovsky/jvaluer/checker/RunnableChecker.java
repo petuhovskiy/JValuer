@@ -36,7 +36,7 @@ public class RunnableChecker extends Checker implements Closeable, AutoCloseable
     }
 
     public RunnableChecker(JValuer jValuer, Source source) {
-        this(jValuer, source, new RunLimits(10000L, 1024L * 1024 * 512));
+        this(jValuer, source, RunLimits.of("10s", "256M"));
     }
 
     public RunnableChecker(JValuer jValuer, Path source) {

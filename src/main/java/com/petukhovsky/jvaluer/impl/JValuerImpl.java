@@ -60,6 +60,7 @@ public class JValuerImpl implements JValuer {
                 .windows(() -> loadResource("runexe.exe", "/runexe.exe"))
                 .unix(() -> loadResource("runexe", "/runexe_linux"))
                 .orElse(() -> null);
+        FilesUtils.chmod(runexe, 111);
         if (runexe != null) {
             Invoker invoker = new RunexeInvoker(runexe);
             invokerMap.put("default", invoker);
@@ -96,7 +97,7 @@ public class JValuerImpl implements JValuer {
     @Override
     public Path createTempExe() {
         Path exe = createTempFile("runnable", new OSRelatedValue<String>().windows(".exe").orElse(".out"));
-        Local.chmod777(exe);
+        FilesUtils.chmod(exe, 777);
         return exe;
     }
 

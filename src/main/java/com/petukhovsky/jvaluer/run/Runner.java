@@ -46,7 +46,7 @@ public class Runner implements Closeable, AutoCloseable {
         } catch (IOException e) {
             logger.log(Level.SEVERE, "can't copy specified exe", e);
         }
-        Local.chmod777(this.executable);
+        FilesUtils.chmod(this.executable, 111);
 
         this.invoker = invoker;
         options = options.setExe(this.executable);
@@ -71,8 +71,8 @@ public class Runner implements Closeable, AutoCloseable {
     private InvocationResult run(RunOptions options) {
         try {
             Files.createFile(out);
-            Local.chmod777(this.in);
-            Local.chmod777(this.out);
+            FilesUtils.chmod(this.in, 444);
+            FilesUtils.chmod(this.out, 666);
         } catch (IOException e) {
             logger.log(Level.WARNING, "can't init in/out", e);
         }
