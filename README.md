@@ -63,7 +63,7 @@ RunnerBuilder builder = ... //builder obtained from jValuer or anywhere else
 ```
 ### Run
 ```java
-try(Runner runner = jValuer.createRunner()
+try(Runner runner = new RunnerBuilder(jValuer)
     .trusted()
     .limits(RunLimits.ofTime(1000L))
     .build(exe)) {
