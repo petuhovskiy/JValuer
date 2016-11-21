@@ -24,3 +24,10 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile 'com.github.petuhovskiy:jvaluer-commons:v0.4.11'
 }
+
+test {
+    testLogging {
+        events "failed"
+        exceptionFormat "short"
+    }
+}
