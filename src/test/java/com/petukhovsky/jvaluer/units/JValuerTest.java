@@ -20,8 +20,6 @@ import static org.junit.Assert.assertEquals;
  * Created by Arthur Petukhovsky on 5/22/2016.
  */
 public class JValuerTest {
-    private JValuer jValuer;
-
     public JValuer loadJValuer() {
         return new JValuerBuilder()
                 .addLanguage(new Language("GNU C++", new RunnableCompiler("g++", "{defines} -O2 -o {output} {source}")),
@@ -32,13 +30,8 @@ public class JValuerTest {
                                 new CustomInvoker(new OSRelatedValue<String>()
                                         .windows("c:/Programs/Python-3/python.exe").orElse("python3"), "{exe} {args}")),
                         new String[]{"py"}, new String[]{"python", "py", "python3"})
-                .setPath(Paths.get("/data/jvaluer/tmp/"))
+                .setPath(Paths.get("/tmp/jvaluer/"))
                 .build();
-    }
-
-    @Before
-    public void before() {
-        this.jValuer = loadJValuer();
     }
 
     @Test
