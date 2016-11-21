@@ -9,7 +9,9 @@ import com.petukhovsky.jvaluer.commons.run.RunInfo;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
 import com.petukhovsky.jvaluer.commons.run.RunVerdict;
+import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -48,6 +50,7 @@ public class RunexeInvoker implements Invoker {
 
     @Override
     public RunInfo run(JValuer jValuer, RunOptions options) {
+        String xmlOutput = null;
         try {
             String cmd = String.format("%s -xml", runexe);
 
@@ -76,7 +79,13 @@ public class RunexeInvoker implements Invoker {
             Process process = Local.execute(cmd);
             process.waitFor();
 
-            Document doc = builder.parse(process.getInputStream());
+            xmlOutput = IOUtils.toString(process.getInputStream(), "UTF-8");
+            logger.log(System.getenv("JVALUER_RUNEXE_DEBUG") != null ? Level.INFO : Level.FINE, xmlOutput);
+
+            int xmlIndex = xmlOutput.indexOf("<?xml");
+            if (xmlIndex != -1) xmlOutput = xmlOutput.substring(xmlIndex);
+
+            Document doc = builder.parse(IOUtils.toInputStream(xmlOutput, "UTF-8"));
             String verdict = doc.getElementsByTagName("invocationVerdict").item(0).getTextContent();
             int exitCode = Integer.parseInt(doc.getElementsByTagName("exitCode").item(0).getTextContent());
             long userTime = Long.parseLong(doc.getElementsByTagName("processorUserModeTime").item(0).getTextContent());
@@ -87,7 +96,7 @@ public class RunexeInvoker implements Invoker {
 
             return RunInfo.completed(RunVerdict.valueOf(verdict), exitCode, userTime, kernelTime, passedTime, consumedMemory, comment);
         } catch (NumberFormatException | IOException | InterruptedException | SAXException e) {
-            logger.log(Level.SEVERE, "run is crashed", e);
+            logger.log(Level.SEVERE, "run is crashed, xmlOutput = " + xmlOutput, e);
             return RunInfo.crashed("Crashed while invoking");
         }
     }
