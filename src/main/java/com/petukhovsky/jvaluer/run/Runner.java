@@ -23,6 +23,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  * Created by Arthur on 12/18/2015.
@@ -118,8 +119,8 @@ public class Runner implements Closeable, AutoCloseable {
     }
 
     private void cleanDirectory() {
-        try {
-            Files.list(dir).filter(path -> !path.equals(executable)).forEach(FilesUtils::removeRecursiveForce);
+        try (Stream<Path> it = Files.list(dir)) {
+            it.filter(path -> !path.equals(executable)).forEach(FilesUtils::removeRecursiveForce);
         } catch (IOException e) {
             logger.log(Level.WARNING, "can't list directory", e);
         }
