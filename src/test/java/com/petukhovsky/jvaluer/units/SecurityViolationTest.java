@@ -3,6 +3,7 @@ package com.petukhovsky.jvaluer.units;
 import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.commons.data.StringData;
+import com.petukhovsky.jvaluer.commons.exe.Executable;
 import com.petukhovsky.jvaluer.commons.invoker.Invoker;
 import com.petukhovsky.jvaluer.commons.local.OSRelatedValue;
 import com.petukhovsky.jvaluer.commons.run.RunInfo;
@@ -12,6 +13,7 @@ import com.petukhovsky.jvaluer.commons.source.Source;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
 import com.petukhovsky.jvaluer.run.Runner;
 import com.petukhovsky.jvaluer.run.RunnerBuilder;
+import com.petukhovsky.jvaluer.run.SafeRunner;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,6 +22,7 @@ import java.nio.file.Path;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import static com.petukhovsky.jvaluer.units.TLTask.ONE_SECOND;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -37,44 +40,36 @@ public class SecurityViolationTest {
     public void loadResources() {
         this.jValuer = new JValuerTest().loadJValuer();
         this.source = jValuer.getLanguages().autoSource(jValuer.loadResource("security_violation.cpp", "/security_violation.cpp"));
-        CompilationResult result = jValuer.compile(source);
-        logger.info(result + "");
-        assertTrue(result.isSuccess());
-        exe = result.getExe();
+        exe = Utils.compileAssert(jValuer, source);
     }
 
     @Test
     public void testRunexeLinux() throws IOException {
-        Invoker invoker = jValuer.builtin().invoker("runexe");
+        Invoker invoker = null;
         if (invoker == null) {
-            logger.info("Runexe security violation test skip");
+            logger.info("Runexe security violation test skip"); //TODO
             return;
         }
-        //requires user with low permissions
-        try (Runner runner = new RunnerBuilder(jValuer)
-                .limits(RunLimits.ofTime(1000L))
-                .build(exe, invoker)) {
-            tests(runner);
-        }
+        SafeRunner runner = Utils.trustedSafe(jValuer, ONE_SECOND, exe, invoker);
+        tests(runner);
     }
 
-    private void tests(Runner runner) {
+    private void tests(SafeRunner runner) {
         String exe = new OSRelatedValue<String>()
                 .windows("notepad.exe")
                 .unix("subl")
                 .orElse(null);
-        Random random = new Random();
         for (int i = 0; i < 2; i++) {
-            int a = random.nextInt(5);
-            int b = random.nextInt(5);
+            int a = 2 + i;
+            int b = 5 - i;
             RunInfo info = runner.run(new StringData(a + " " + b + " " + exe)).getRun();
             assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
         }
         for (int i = 0; i < 2; i++) {
             int a = 123;
-            int b = random.nextInt(100);
+            int b = 23 + 45 * i;
             RunInfo info = runner.run(new StringData(a + " " + b + " " + exe)).getRun();
-            logger.severe(info + "");
+            logger.severe(info.toString());
             assertTrue(info.getRunVerdict() == RunVerdict.SECURITY_VIOLATION);
         }
     }

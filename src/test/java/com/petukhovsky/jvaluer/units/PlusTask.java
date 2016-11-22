@@ -3,16 +3,15 @@ package com.petukhovsky.jvaluer.units;
 import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.commons.data.StringData;
+import com.petukhovsky.jvaluer.commons.exe.Executable;
 import com.petukhovsky.jvaluer.commons.invoker.Invoker;
-import com.petukhovsky.jvaluer.commons.run.InvocationResult;
-import com.petukhovsky.jvaluer.commons.run.RunInOut;
-import com.petukhovsky.jvaluer.commons.run.RunInfo;
-import com.petukhovsky.jvaluer.commons.run.RunVerdict;
+import com.petukhovsky.jvaluer.commons.run.*;
 import com.petukhovsky.jvaluer.commons.source.Source;
 import com.petukhovsky.jvaluer.invoker.NaiveInvoker;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
 import com.petukhovsky.jvaluer.run.Runner;
 import com.petukhovsky.jvaluer.run.RunnerBuilder;
+import com.petukhovsky.jvaluer.run.SafeRunner;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,39 +39,27 @@ public class PlusTask {
     public void loadResources() {
         this.jValuer = new JValuerTest().loadJValuer();
         this.source = jValuer.getLanguages().autoSource(jValuer.loadResource("plus.cpp", "/plustxt.cpp"));
-        CompilationResult result = jValuer.compile(source);
-        logger.info(result + "");
-        assertTrue(result.isSuccess());
-        exe = result.getExe();
-        System.gc();
+        exe = Utils.compileAssert(jValuer, source);
     }
 
-    @Test(timeout = 20000)
+    @Test
     public void testRunexe() throws IOException {
         Invoker invoker = jValuer.builtin().invoker("runexe");
         if (invoker == null) {
             logger.info("Runexe plustask test skip");
             return;
         }
-        try (Runner runner = new RunnerBuilder(jValuer)
-                .inOut(RunInOut.txt())
-                .trusted()
-                .build(exe, invoker)) {
-            tests20(runner);
-        }
+        SafeRunner runner = Utils.trustedSafe(jValuer, RunLimits.unlimited(), RunInOut.txt(), exe, invoker);
+        tests20(runner);
     }
 
-    @Test(timeout = 20000)
+    @Test
     public void testNaive() throws IOException {
-        try (Runner runner = new RunnerBuilder(jValuer)
-                .inOut(RunInOut.txt())
-                .trusted()
-                .build(exe, new NaiveInvoker())) {
-            tests20(runner);
-        }
+        SafeRunner runner = Utils.trustedSafe(jValuer, RunLimits.unlimited(), RunInOut.txt(), exe, new NaiveInvoker());
+        tests20(runner);
     }
 
-    private void tests20(Runner runner) {
+    private void tests20(SafeRunner runner) {
         Random random = new Random();
         for (int i = 0; i < 10; i++) {
             int a = random.nextInt(100500);
@@ -81,7 +68,7 @@ public class PlusTask {
             InvocationResult ir = runner.run(new StringData(a + " " + b));
             RunInfo info = ir.getRun();
             assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
-            assertEquals(ir.getOut().getString(), result + "");
+            assertEquals(ir.getOut().getString(), Integer.toString(result));
         }
     }
 

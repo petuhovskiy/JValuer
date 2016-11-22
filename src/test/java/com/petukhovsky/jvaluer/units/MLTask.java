@@ -3,6 +3,7 @@ package com.petukhovsky.jvaluer.units;
 import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
 import com.petukhovsky.jvaluer.commons.data.StringData;
+import com.petukhovsky.jvaluer.commons.exe.Executable;
 import com.petukhovsky.jvaluer.commons.invoker.Invoker;
 import com.petukhovsky.jvaluer.commons.run.RunInfo;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
@@ -11,6 +12,7 @@ import com.petukhovsky.jvaluer.commons.source.Source;
 import com.petukhovsky.jvaluer.invoker.RunexeInvoker;
 import com.petukhovsky.jvaluer.run.Runner;
 import com.petukhovsky.jvaluer.run.RunnerBuilder;
+import com.petukhovsky.jvaluer.run.SafeRunner;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,40 +38,30 @@ public class MLTask {
     public void loadResources() {
         this.jValuer = new JValuerTest().loadJValuer();
         this.source = jValuer.getLanguages().autoSource(jValuer.loadResource("ml.cpp", "/ml.cpp"));
-        CompilationResult result = jValuer.compile(source);
-        logger.info(result + "");
-        assertTrue(result.isSuccess());
-        exe = result.getExe();
+        exe = Utils.compileAssert(jValuer, source);
     }
 
     @Test
     public void testRunexe() throws IOException {
-        Invoker invoker = jValuer.builtin().invoker("runexe");
-        if (invoker == null) {
+        Invoker invoker = jValuer.builtin().invoker("default");
+        if (!(invoker instanceof RunexeInvoker)) {
             logger.info("Runexe ml test skip");
             return;
         }
-        Random random = new Random();
-        final long mb = 1024L * 1024;
-        final long intMB = mb / 4;
-        for (int i = 64; i <= 256; i *= 2) {
-            try (Runner runner = new RunnerBuilder(jValuer)
-                    .trusted()
-                    .limits(new RunLimits(2000L, mb * i))
-                    .build(exe, invoker)) {
-                long a = 5 + random.nextInt(100);
-                RunInfo info = runner.run(new StringData(a + "")).getRun();
-                logger.info(info + "");
-                assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
-                a = (i / 4) * intMB;
-                info = runner.run(new StringData(a + "")).getRun();
-                logger.info(info + "");
-                assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
-                a = (i + i) * intMB;
-                info = runner.run(new StringData(a + "")).getRun();
-                logger.info(info + "");
-                assertTrue(info.getRunVerdict() == RunVerdict.MEMORY_LIMIT_EXCEEDED);
-            }
+        final Long bytesGap = RunLimits.parseMemory("20mb");
+        for (int i = 32; i <= 256; i *= 2) {
+            SafeRunner runner = Utils.trustedSafe(jValuer, RunLimits.of("2s", i + "mb"), exe, invoker);
+            Long bytes = RunLimits.parseMemory(i + "mb");
+
+            RunInfo info = runner.run(new StringData("123")).getRun();
+            logger.info(info.toString());
+            assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
+            info = runner.run(new StringData(Long.toString((bytes - bytesGap) / 4))).getRun();
+            logger.info(info.toString());
+            assertTrue(info.getRunVerdict() == RunVerdict.SUCCESS);
+            info = runner.run(new StringData(Long.toString(bytes / 2))).getRun();
+            logger.info(info.toString());
+            assertTrue(info.getRunVerdict() == RunVerdict.MEMORY_LIMIT_EXCEEDED);
         }
     }
 }

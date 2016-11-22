@@ -6,10 +6,10 @@ using namespace std;
 
 int main() {
     ios_base::sync_with_stdio(0);
-    int t;
+    long long t;
     cin >> t;
-    vector<int> v(t);
+    vector<int> v(t, -1);
     v[t - 1] = 123;
-    cout << v[t - 1] << endl;
+    cout << v[t - 1] << endl << "hello";
     return 0;
 }

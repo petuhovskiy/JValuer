@@ -2,7 +2,13 @@ package com.petukhovsky.jvaluer.units;
 
 import com.petukhovsky.jvaluer.JValuer;
 import com.petukhovsky.jvaluer.commons.compiler.CompilationResult;
+import com.petukhovsky.jvaluer.commons.exe.Executable;
+import com.petukhovsky.jvaluer.commons.invoker.Invoker;
+import com.petukhovsky.jvaluer.commons.run.RunInOut;
+import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.source.Source;
+import com.petukhovsky.jvaluer.run.RunnerBuilder;
+import com.petukhovsky.jvaluer.run.SafeRunner;
 
 import java.nio.file.Path;
 import java.util.logging.Logger;
@@ -20,5 +26,17 @@ public class Utils {
         logger.info(result.toString());
         assertTrue(result.isSuccess());
         return result.getExe();
+    }
+
+    public static SafeRunner trustedSafe(JValuer jValuer, RunLimits limits, Path exe, Invoker invoker) {
+        return trustedSafe(jValuer, limits, RunInOut.std(), exe, invoker);
+    }
+
+    public static SafeRunner trustedSafe(JValuer jValuer, RunLimits limits, RunInOut inOut, Path exe, Invoker invoker) {
+        return new RunnerBuilder(jValuer)
+                .inOut(inOut)
+                .limits(limits)
+                .trusted()
+                .buildSafe(new Executable(exe, invoker));
     }
 }
