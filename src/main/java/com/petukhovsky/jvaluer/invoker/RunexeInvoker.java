@@ -19,6 +19,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -81,9 +82,6 @@ public class RunexeInvoker implements Invoker {
 
             xmlOutput = IOUtils.toString(process.getInputStream(), "UTF-8");
             logger.log(System.getenv("JVALUER_RUNEXE_DEBUG") != null ? Level.INFO : Level.FINE, xmlOutput);
-
-            int xmlIndex = xmlOutput.indexOf("<?xml");
-            if (xmlIndex != -1) xmlOutput = xmlOutput.substring(xmlIndex);
 
             Document doc = builder.parse(IOUtils.toInputStream(xmlOutput, "UTF-8"));
             String verdict = doc.getElementsByTagName("invocationVerdict").item(0).getTextContent();

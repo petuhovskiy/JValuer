@@ -7,10 +7,7 @@ import com.petukhovsky.jvaluer.commons.compiler.Compiler;
 import com.petukhovsky.jvaluer.commons.invoker.Invoker;
 import com.petukhovsky.jvaluer.commons.lang.Language;
 import com.petukhovsky.jvaluer.commons.lang.Languages;
-import com.petukhovsky.jvaluer.commons.local.Local;
-import com.petukhovsky.jvaluer.commons.local.OSRelatedSupplier;
-import com.petukhovsky.jvaluer.commons.local.OSRelatedValue;
-import com.petukhovsky.jvaluer.commons.local.UserAccount;
+import com.petukhovsky.jvaluer.commons.local.*;
 import com.petukhovsky.jvaluer.commons.run.RunInfo;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
 import com.petukhovsky.jvaluer.commons.source.Source;
@@ -65,12 +62,10 @@ public class JValuerImpl implements JValuer {
                 .orElse(() -> null);
         FilesUtils.chmod(runexe, 111);
         if (runexe != null) {
-            Invoker invoker = new RunexeInvoker(runexe);
-            invokerMap.put("default", invoker);
-            invokerMap.put("runexe", invoker);
-        } else {
-            invokerMap.put("default", naive);
+            invokerMap.put("runexe", new RunexeInvoker(runexe));
         }
+
+        invokerMap.put("default", invokerMap.get(invokerMap.containsKey("runexe") ? "runexe" : "naive"));
 
         this.builtin = new BuiltinImpl(invokerMap);
     }

@@ -5,12 +5,14 @@ import com.petukhovsky.jvaluer.commons.data.PathData;
 import com.petukhovsky.jvaluer.commons.data.TestData;
 import com.petukhovsky.jvaluer.commons.invoker.Invoker;
 import com.petukhovsky.jvaluer.commons.local.Local;
+import com.petukhovsky.jvaluer.commons.local.OS;
 import com.petukhovsky.jvaluer.commons.local.OSRelatedValue;
 import com.petukhovsky.jvaluer.commons.run.InvocationResult;
 import com.petukhovsky.jvaluer.commons.run.RunInOut;
 import com.petukhovsky.jvaluer.commons.run.RunLimits;
 import com.petukhovsky.jvaluer.commons.run.RunOptions;
 import com.petukhovsky.jvaluer.util.FilesUtils;
+import sun.nio.fs.BasicFileAttributesHolder;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -94,7 +97,7 @@ public class Runner implements Closeable, AutoCloseable {
     public InvocationResult run(InputStream is, RunLimits limits, String... args) {
         RunOptions options = this.options;
         if (limits != null) options = options.setLimits(limits);
-        if (args != null) options = options.setArgs(String.join(" ", args));
+        if (args != null) options = options.setArgs(String.join(" ", (CharSequence[]) args));
         return run(is, options);
     }
 
