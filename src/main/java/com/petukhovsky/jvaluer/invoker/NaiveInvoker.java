@@ -30,13 +30,13 @@ public class NaiveInvoker implements Invoker {
             RunLimits limits = options.getLimits();
 
             logger.info("Naive invoker: " + "no memory limit" +
-                    ", " + (limits.getTime() == null ? "no time limit" : limits.getTime() + " ms") + ", no process limit. " + options.getExe().toAbsolutePath());
+                    ", " + (limits.getTime() == null ? "no time limit" : limits.getTime() + " ms") + ", no process limit. " + options.getExe());
 
 
-            ProcessBuilder builder = new ProcessBuilder(OS.isWindows() ? new String[]{options.getExe().toAbsolutePath().toString(), args}
-                    : new String[]{"bash", "-c", options.getExe().toAbsolutePath().toString(), args});
+            ProcessBuilder builder = new ProcessBuilder(OS.isWindows() ? new String[]{options.getExe(), args}
+                    : new String[]{"bash", "-c", options.getExe(), args});
 
-            logger.info("creating process = " + options.getExe().toAbsolutePath().toString() + " " + args);
+            logger.info("creating process = " + options.getExe() + " " + args);
 
             File dir = options.getFolder() != null ? options.getFolder().toFile() : Paths.get("").toFile();
             if (options.getFolder() != null) builder.directory(dir);

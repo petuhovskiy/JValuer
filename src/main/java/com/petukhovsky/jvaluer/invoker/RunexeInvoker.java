@@ -73,7 +73,7 @@ public class RunexeInvoker implements Invoker {
             if (limits.getMemory() != null) cmd += " -m " + limits.getMemory();
             if (limits.getTime() != null) cmd += " -t " + limits.getTime() + "ms";
 
-            cmd += " \"" + options.getExe().toAbsolutePath() + "\" " + options.getArgs();
+            cmd += options.getExe() + " " + options.getArgs();
 
             logger.info("Invoker runs runexe with cmd: " + cmd);
 

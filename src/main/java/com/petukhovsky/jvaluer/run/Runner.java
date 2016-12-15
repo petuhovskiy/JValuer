@@ -49,7 +49,7 @@ public class Runner implements Closeable, AutoCloseable {
         FilesUtils.chmod(this.executable, 111);
 
         this.invoker = invoker;
-        options = options.setExe(this.executable);
+        options = options.setExe("\"" + this.executable.toAbsolutePath() + "\"");
 
         this.jValuer = jValuer;
 

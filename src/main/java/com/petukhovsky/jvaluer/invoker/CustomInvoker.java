@@ -13,16 +13,16 @@ import java.nio.file.Paths;
  */
 public class CustomInvoker implements Invoker {
     private final String pattern;
-    private final Path executable;
+    private final String executable;
 
     public CustomInvoker(String executable, String pattern) {
         this.pattern = pattern;
-        this.executable = Paths.get(executable);
+        this.executable = executable;
     }
 
     @Override
     public RunInfo run(JValuer jValuer, RunOptions options) {
-        options = options.setArgs(processPattern(pattern, options.getArgs(), options.getExe().toString())).setExe(this.executable);
+        options = options.setArgs(processPattern(pattern, options.getArgs(), options.getExe())).setExe(this.executable);
         return jValuer.invokeDefault(options);
     }
 
