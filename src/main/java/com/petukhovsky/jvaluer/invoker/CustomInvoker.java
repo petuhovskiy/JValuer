@@ -27,7 +27,6 @@ public class CustomInvoker implements Invoker {
     }
 
     private String processPattern(String pattern, String args, String executable) {
-        return pattern.replaceAll("\\{args\\}", args)
-                .replaceAll("\\{exe\\}", "\"" + executable + "\"");
+        return pattern.replace("{args}", args).replace("{exe}", "\"" + executable + "\"");
     }
 }
