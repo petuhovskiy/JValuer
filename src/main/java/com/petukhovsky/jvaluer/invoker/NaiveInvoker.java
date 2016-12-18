@@ -34,7 +34,7 @@ public class NaiveInvoker implements Invoker {
 
 
             ProcessBuilder builder = new ProcessBuilder(OS.isWindows() ? new String[]{options.getExe(), args}
-                    : new String[]{"bash", "-c", options.getExe(), args});
+                    : new String[]{"bash", "-c", options.getExe() + " " + args});
 
             logger.info("creating process = " + options.getExe() + " " + args);
 
